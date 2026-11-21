@@ -1,0 +1,1294 @@
+{
+  "mode": "client",
+  "activeTab": "tracker",
+  "selectedWeek": 1,
+  "clientMeta": {
+    "name": "Alex Mercer",
+    "phase": "Block 1: Corrective Foundation & Strength Base",
+    "notes": "Prioritize Shoulder Mobility & Ankle Dorsiflexion drills in warm-up before main lower/upper lifts. Leave 2 reps in reserve (RPE 8) on primary compound sets."
+  },
+  "programWeeks": {
+    "1": [
+      {
+        "id": "w1-d1",
+        "dayLabel": "Day 1 — Lower Body Squat & Anti-Rotation",
+        "date": "2026-11-23",
+        "warmups": [
+          {
+            "id": "wu-1",
+            "name": "Ankle Band Distraction Mobilization",
+            "prescription": "2 × 10/side"
+          },
+          {
+            "id": "wu-2",
+            "name": "Deep Squat Hold with T-Spine Rotation",
+            "prescription": "2 × 5/side"
+          },
+          {
+            "id": "wu-3",
+            "name": "Cook Hip Lift",
+            "prescription": "2 × 8/side"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "e-101",
+            "name": "Goblet Squat",
+            "sets": 3,
+            "reps": 10,
+            "weight": 45,
+            "rpe": 7.5,
+            "notes": "3-sec eccentric, heels on 5lb plates if needed",
+            "completed": true
+          },
+          {
+            "id": "e-102",
+            "name": "Landmine Split Squat",
+            "sets": 3,
+            "reps": 8,
+            "weight": 50,
+            "rpe": 8,
+            "notes": "Each leg; keep ribs stacked over pelvis",
+            "completed": true
+          },
+          {
+            "id": "e-103",
+            "name": "Single-Arm Dumbbell Row",
+            "sets": 3,
+            "reps": 10,
+            "weight": 35,
+            "rpe": 8,
+            "notes": "Pause 1s at top, keep shoulder packed",
+            "completed": false
+          },
+          {
+            "id": "e-104",
+            "name": "Half-Kneeling Pallof Press",
+            "sets": 3,
+            "reps": 10,
+            "weight": 20,
+            "rpe": 7.5,
+            "notes": "2-sec isometric hold at full extension",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w1-d2",
+        "dayLabel": "Day 2 — Upper Push/Pull & T-Spine Mobility",
+        "date": "2026-11-25",
+        "warmups": [
+          {
+            "id": "wu-4",
+            "name": "Band Shoulder Dislocators",
+            "prescription": "2 × 12"
+          },
+          {
+            "id": "wu-5",
+            "name": "Quadruped T-Spine Rotation",
+            "prescription": "2 × 8/side"
+          },
+          {
+            "id": "wu-6",
+            "name": "Prone YTWL",
+            "prescription": "2 × 6 each"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "e-201",
+            "name": "Half-Kneeling Landmine Press",
+            "sets": 3,
+            "reps": 8,
+            "weight": 45,
+            "rpe": 8,
+            "notes": "FMS Shoulder 1 safe alternative to overhead press",
+            "completed": false
+          },
+          {
+            "id": "e-202",
+            "name": "Incline Push-Up",
+            "sets": 3,
+            "reps": 12,
+            "weight": 0,
+            "rpe": 7.5,
+            "notes": "Hands on 24\" box; maintain rigid plank",
+            "completed": false
+          },
+          {
+            "id": "e-203",
+            "name": "Half-Kneeling Cable Pulldown",
+            "sets": 3,
+            "reps": 10,
+            "weight": 70,
+            "rpe": 8,
+            "notes": "Drive elbows to hip pockets",
+            "completed": false
+          },
+          {
+            "id": "e-204",
+            "name": "Bird Dog",
+            "sets": 3,
+            "reps": 8,
+            "weight": 0,
+            "rpe": 7,
+            "notes": "3-sec hold per rep; zero lumbar sway",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w1-d3",
+        "dayLabel": "Day 3 — Posterior Chain Hinge & Carry",
+        "date": "2026-11-27",
+        "warmups": [
+          {
+            "id": "wu-7",
+            "name": "Active Hamstring Stretch with Strap",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "wu-8",
+            "name": "Half-Kneeling Hip Flexor Stretch",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "wu-9",
+            "name": "Bear Crawl Hold",
+            "prescription": "2 × 25s"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "e-301",
+            "name": "Trap Bar Deadlift",
+            "sets": 4,
+            "reps": 6,
+            "weight": 155,
+            "rpe": 8,
+            "notes": "High handles; reset brace between each rep",
+            "completed": false
+          },
+          {
+            "id": "e-302",
+            "name": "Romanian Deadlift (RDL)",
+            "sets": 3,
+            "reps": 8,
+            "weight": 95,
+            "rpe": 7.5,
+            "notes": "Push hips back until hamstring end-range",
+            "completed": false
+          },
+          {
+            "id": "e-303",
+            "name": "Heel-Elevated Glute Bridge",
+            "sets": 3,
+            "reps": 12,
+            "weight": 25,
+            "rpe": 8,
+            "notes": "Posterior pelvic tilt at top",
+            "completed": false
+          },
+          {
+            "id": "e-304",
+            "name": "Suitcase Carry",
+            "sets": 3,
+            "reps": 30,
+            "weight": 40,
+            "rpe": 7.5,
+            "notes": "30 yards each hand; stay completely vertical",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "id": "w2-d1",
+        "dayLabel": "Day 1 — Lower Body Squat & Anti-Rotation",
+        "date": "2026-11-30",
+        "warmups": [
+          {
+            "id": "w2-wu-0-0",
+            "name": "Ankle Band Distraction Mobilization",
+            "prescription": "2 × 10/side"
+          },
+          {
+            "id": "w2-wu-0-1",
+            "name": "Deep Squat Hold with T-Spine Rotation",
+            "prescription": "2 × 5/side"
+          },
+          {
+            "id": "w2-wu-0-2",
+            "name": "Cook Hip Lift",
+            "prescription": "2 × 8/side"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w2-e-0-0",
+            "name": "Goblet Squat",
+            "sets": 3,
+            "reps": 10,
+            "weight": 50,
+            "rpe": 8,
+            "notes": "3-sec eccentric, heels on 5lb plates if needed",
+            "completed": false
+          },
+          {
+            "id": "w2-e-0-1",
+            "name": "Landmine Split Squat",
+            "sets": 3,
+            "reps": 8,
+            "weight": 55,
+            "rpe": 8.5,
+            "notes": "Each leg; keep ribs stacked over pelvis",
+            "completed": false
+          },
+          {
+            "id": "w2-e-0-2",
+            "name": "Single-Arm Dumbbell Row",
+            "sets": 3,
+            "reps": 10,
+            "weight": 40,
+            "rpe": 8.5,
+            "notes": "Pause 1s at top, keep shoulder packed",
+            "completed": false
+          },
+          {
+            "id": "w2-e-0-3",
+            "name": "Half-Kneeling Pallof Press",
+            "sets": 3,
+            "reps": 10,
+            "weight": 25,
+            "rpe": 8,
+            "notes": "2-sec isometric hold at full extension",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w2-d2",
+        "dayLabel": "Day 2 — Upper Push/Pull & T-Spine Mobility",
+        "date": "2026-12-02",
+        "warmups": [
+          {
+            "id": "w2-wu-1-0",
+            "name": "Band Shoulder Dislocators",
+            "prescription": "2 × 12"
+          },
+          {
+            "id": "w2-wu-1-1",
+            "name": "Quadruped T-Spine Rotation",
+            "prescription": "2 × 8/side"
+          },
+          {
+            "id": "w2-wu-1-2",
+            "name": "Prone YTWL",
+            "prescription": "2 × 6 each"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w2-e-1-0",
+            "name": "Half-Kneeling Landmine Press",
+            "sets": 3,
+            "reps": 8,
+            "weight": 50,
+            "rpe": 8.5,
+            "notes": "FMS Shoulder 1 safe alternative to overhead press",
+            "completed": false
+          },
+          {
+            "id": "w2-e-1-1",
+            "name": "Incline Push-Up",
+            "sets": 3,
+            "reps": 12,
+            "weight": 0,
+            "rpe": 8,
+            "notes": "Hands on 24\" box; maintain rigid plank",
+            "completed": false
+          },
+          {
+            "id": "w2-e-1-2",
+            "name": "Half-Kneeling Cable Pulldown",
+            "sets": 3,
+            "reps": 10,
+            "weight": 75,
+            "rpe": 8.5,
+            "notes": "Drive elbows to hip pockets",
+            "completed": false
+          },
+          {
+            "id": "w2-e-1-3",
+            "name": "Bird Dog",
+            "sets": 3,
+            "reps": 8,
+            "weight": 0,
+            "rpe": 7.5,
+            "notes": "3-sec hold per rep; zero lumbar sway",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w2-d3",
+        "dayLabel": "Day 3 — Posterior Chain Hinge & Carry",
+        "date": "2026-12-04",
+        "warmups": [
+          {
+            "id": "w2-wu-2-0",
+            "name": "Active Hamstring Stretch with Strap",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "w2-wu-2-1",
+            "name": "Half-Kneeling Hip Flexor Stretch",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "w2-wu-2-2",
+            "name": "Bear Crawl Hold",
+            "prescription": "2 × 25s"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w2-e-2-0",
+            "name": "Trap Bar Deadlift",
+            "sets": 4,
+            "reps": 6,
+            "weight": 160,
+            "rpe": 8.5,
+            "notes": "High handles; reset brace between each rep",
+            "completed": false
+          },
+          {
+            "id": "w2-e-2-1",
+            "name": "Romanian Deadlift (RDL)",
+            "sets": 3,
+            "reps": 8,
+            "weight": 100,
+            "rpe": 8,
+            "notes": "Push hips back until hamstring end-range",
+            "completed": false
+          },
+          {
+            "id": "w2-e-2-2",
+            "name": "Heel-Elevated Glute Bridge",
+            "sets": 3,
+            "reps": 12,
+            "weight": 30,
+            "rpe": 8.5,
+            "notes": "Posterior pelvic tilt at top",
+            "completed": false
+          },
+          {
+            "id": "w2-e-2-3",
+            "name": "Suitcase Carry",
+            "sets": 3,
+            "reps": 30,
+            "weight": 45,
+            "rpe": 8,
+            "notes": "30 yards each hand; stay completely vertical",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "id": "w3-d1",
+        "dayLabel": "Day 1 — Lower Body Squat & Anti-Rotation",
+        "date": "2026-12-07",
+        "warmups": [
+          {
+            "id": "w3-wu-0-0",
+            "name": "Ankle Band Distraction Mobilization",
+            "prescription": "2 × 10/side"
+          },
+          {
+            "id": "w3-wu-0-1",
+            "name": "Deep Squat Hold with T-Spine Rotation",
+            "prescription": "2 × 5/side"
+          },
+          {
+            "id": "w3-wu-0-2",
+            "name": "Cook Hip Lift",
+            "prescription": "2 × 8/side"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w3-e-0-0",
+            "name": "Goblet Squat",
+            "sets": 3,
+            "reps": 10,
+            "weight": 55,
+            "rpe": 8.5,
+            "notes": "3-sec eccentric, heels on 5lb plates if needed",
+            "completed": false
+          },
+          {
+            "id": "w3-e-0-1",
+            "name": "Landmine Split Squat",
+            "sets": 3,
+            "reps": 8,
+            "weight": 60,
+            "rpe": 9,
+            "notes": "Each leg; keep ribs stacked over pelvis",
+            "completed": false
+          },
+          {
+            "id": "w3-e-0-2",
+            "name": "Single-Arm Dumbbell Row",
+            "sets": 3,
+            "reps": 10,
+            "weight": 45,
+            "rpe": 9,
+            "notes": "Pause 1s at top, keep shoulder packed",
+            "completed": false
+          },
+          {
+            "id": "w3-e-0-3",
+            "name": "Half-Kneeling Pallof Press",
+            "sets": 3,
+            "reps": 10,
+            "weight": 30,
+            "rpe": 8.5,
+            "notes": "2-sec isometric hold at full extension",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w3-d2",
+        "dayLabel": "Day 2 — Upper Push/Pull & T-Spine Mobility",
+        "date": "2026-12-09",
+        "warmups": [
+          {
+            "id": "w3-wu-1-0",
+            "name": "Band Shoulder Dislocators",
+            "prescription": "2 × 12"
+          },
+          {
+            "id": "w3-wu-1-1",
+            "name": "Quadruped T-Spine Rotation",
+            "prescription": "2 × 8/side"
+          },
+          {
+            "id": "w3-wu-1-2",
+            "name": "Prone YTWL",
+            "prescription": "2 × 6 each"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w3-e-1-0",
+            "name": "Half-Kneeling Landmine Press",
+            "sets": 3,
+            "reps": 8,
+            "weight": 55,
+            "rpe": 9,
+            "notes": "FMS Shoulder 1 safe alternative to overhead press",
+            "completed": false
+          },
+          {
+            "id": "w3-e-1-1",
+            "name": "Incline Push-Up",
+            "sets": 3,
+            "reps": 12,
+            "weight": 0,
+            "rpe": 8.5,
+            "notes": "Hands on 24\" box; maintain rigid plank",
+            "completed": false
+          },
+          {
+            "id": "w3-e-1-2",
+            "name": "Half-Kneeling Cable Pulldown",
+            "sets": 3,
+            "reps": 10,
+            "weight": 80,
+            "rpe": 9,
+            "notes": "Drive elbows to hip pockets",
+            "completed": false
+          },
+          {
+            "id": "w3-e-1-3",
+            "name": "Bird Dog",
+            "sets": 3,
+            "reps": 8,
+            "weight": 0,
+            "rpe": 8,
+            "notes": "3-sec hold per rep; zero lumbar sway",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w3-d3",
+        "dayLabel": "Day 3 — Posterior Chain Hinge & Carry",
+        "date": "2026-12-11",
+        "warmups": [
+          {
+            "id": "w3-wu-2-0",
+            "name": "Active Hamstring Stretch with Strap",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "w3-wu-2-1",
+            "name": "Half-Kneeling Hip Flexor Stretch",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "w3-wu-2-2",
+            "name": "Bear Crawl Hold",
+            "prescription": "2 × 25s"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w3-e-2-0",
+            "name": "Trap Bar Deadlift",
+            "sets": 4,
+            "reps": 6,
+            "weight": 165,
+            "rpe": 9,
+            "notes": "High handles; reset brace between each rep",
+            "completed": false
+          },
+          {
+            "id": "w3-e-2-1",
+            "name": "Romanian Deadlift (RDL)",
+            "sets": 3,
+            "reps": 8,
+            "weight": 105,
+            "rpe": 8.5,
+            "notes": "Push hips back until hamstring end-range",
+            "completed": false
+          },
+          {
+            "id": "w3-e-2-2",
+            "name": "Heel-Elevated Glute Bridge",
+            "sets": 3,
+            "reps": 12,
+            "weight": 35,
+            "rpe": 9,
+            "notes": "Posterior pelvic tilt at top",
+            "completed": false
+          },
+          {
+            "id": "w3-e-2-3",
+            "name": "Suitcase Carry",
+            "sets": 3,
+            "reps": 30,
+            "weight": 50,
+            "rpe": 8.5,
+            "notes": "30 yards each hand; stay completely vertical",
+            "completed": false
+          }
+        ]
+      }
+    ],
+    "4": [
+      {
+        "id": "w4-d1",
+        "dayLabel": "Day 1 — Lower Body Squat & Anti-Rotation",
+        "date": "2026-12-14",
+        "warmups": [
+          {
+            "id": "w4-wu-0-0",
+            "name": "Ankle Band Distraction Mobilization",
+            "prescription": "2 × 10/side"
+          },
+          {
+            "id": "w4-wu-0-1",
+            "name": "Deep Squat Hold with T-Spine Rotation",
+            "prescription": "2 × 5/side"
+          },
+          {
+            "id": "w4-wu-0-2",
+            "name": "Cook Hip Lift",
+            "prescription": "2 × 8/side"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w4-e-0-0",
+            "name": "Goblet Squat",
+            "sets": 3,
+            "reps": 10,
+            "weight": 60,
+            "rpe": 6.5,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-0-1",
+            "name": "Landmine Split Squat",
+            "sets": 3,
+            "reps": 8,
+            "weight": 65,
+            "rpe": 7,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-0-2",
+            "name": "Single-Arm Dumbbell Row",
+            "sets": 3,
+            "reps": 10,
+            "weight": 50,
+            "rpe": 7,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-0-3",
+            "name": "Half-Kneeling Pallof Press",
+            "sets": 3,
+            "reps": 10,
+            "weight": 35,
+            "rpe": 6.5,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w4-d2",
+        "dayLabel": "Day 2 — Upper Push/Pull & T-Spine Mobility",
+        "date": "2026-12-16",
+        "warmups": [
+          {
+            "id": "w4-wu-1-0",
+            "name": "Band Shoulder Dislocators",
+            "prescription": "2 × 12"
+          },
+          {
+            "id": "w4-wu-1-1",
+            "name": "Quadruped T-Spine Rotation",
+            "prescription": "2 × 8/side"
+          },
+          {
+            "id": "w4-wu-1-2",
+            "name": "Prone YTWL",
+            "prescription": "2 × 6 each"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w4-e-1-0",
+            "name": "Half-Kneeling Landmine Press",
+            "sets": 3,
+            "reps": 8,
+            "weight": 60,
+            "rpe": 7,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-1-1",
+            "name": "Incline Push-Up",
+            "sets": 3,
+            "reps": 12,
+            "weight": 0,
+            "rpe": 6.5,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-1-2",
+            "name": "Half-Kneeling Cable Pulldown",
+            "sets": 3,
+            "reps": 10,
+            "weight": 85,
+            "rpe": 7,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-1-3",
+            "name": "Bird Dog",
+            "sets": 3,
+            "reps": 8,
+            "weight": 0,
+            "rpe": 6.5,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": "w4-d3",
+        "dayLabel": "Day 3 — Posterior Chain Hinge & Carry",
+        "date": "2026-12-18",
+        "warmups": [
+          {
+            "id": "w4-wu-2-0",
+            "name": "Active Hamstring Stretch with Strap",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "w4-wu-2-1",
+            "name": "Half-Kneeling Hip Flexor Stretch",
+            "prescription": "2 × 30s/side"
+          },
+          {
+            "id": "w4-wu-2-2",
+            "name": "Bear Crawl Hold",
+            "prescription": "2 × 25s"
+          }
+        ],
+        "exercises": [
+          {
+            "id": "w4-e-2-0",
+            "name": "Trap Bar Deadlift",
+            "sets": 4,
+            "reps": 6,
+            "weight": 170,
+            "rpe": 7,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-2-1",
+            "name": "Romanian Deadlift (RDL)",
+            "sets": 3,
+            "reps": 8,
+            "weight": 110,
+            "rpe": 6.5,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-2-2",
+            "name": "Heel-Elevated Glute Bridge",
+            "sets": 3,
+            "reps": 12,
+            "weight": 40,
+            "rpe": 7,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          },
+          {
+            "id": "w4-e-2-3",
+            "name": "Suitcase Carry",
+            "sets": 3,
+            "reps": 30,
+            "weight": 55,
+            "rpe": 6.5,
+            "notes": "Deload / Consolidation Week — crisp bar speed",
+            "completed": false
+          }
+        ]
+      }
+    ]
+  },
+  "fmsScores": [
+    {
+      "id": "deep_squat",
+      "name": "Deep Squat",
+      "bilateral": false,
+      "left": 2,
+      "right": 2,
+      "clearing": "Pass"
+    },
+    {
+      "id": "hurdle_step",
+      "name": "Hurdle Step",
+      "bilateral": true,
+      "left": 2,
+      "right": 2,
+      "clearing": "Pass"
+    },
+    {
+      "id": "inline_lunge",
+      "name": "Inline Lunge",
+      "bilateral": true,
+      "left": 2,
+      "right": 1,
+      "clearing": "Pass"
+    },
+    {
+      "id": "shoulder_mobility",
+      "name": "Shoulder Mobility",
+      "bilateral": true,
+      "left": 1,
+      "right": 2,
+      "clearing": "Pass"
+    },
+    {
+      "id": "aslr",
+      "name": "Active Straight-Leg Raise",
+      "bilateral": true,
+      "left": 2,
+      "right": 2,
+      "clearing": "Pass"
+    },
+    {
+      "id": "trunk_pushup",
+      "name": "Trunk Stability Push-Up",
+      "bilateral": false,
+      "left": 2,
+      "right": 2,
+      "clearing": "Pass"
+    },
+    {
+      "id": "rotary_stability",
+      "name": "Rotary Stability",
+      "bilateral": true,
+      "left": 2,
+      "right": 2,
+      "clearing": "Pass"
+    }
+  ],
+  "fmsComments": "Left shoulder internal rotation deficit noted during Shoulder Mobility screen; keep overhead barbell/DB pressing restricted until score reaches >= 2. Re-test in 4 weeks.",
+  "exerciseLibrary": [
+    {
+      "id": "ex-1",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 1",
+      "name": "Band Shoulder Dislocators",
+      "category": "Mobility / Warm-Up",
+      "cues": "Use a wide grip on a light resistance band or PVC pipe. Keep ribs tucked down and move smoothly overhead without lumbar hyperextension."
+    },
+    {
+      "id": "ex-2",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 1",
+      "name": "Banded Overhead Lat Stretch",
+      "category": "Mobility / Warm-Up",
+      "cues": "Anchor band high, hinge hips back, keep thumb pointed up, and breathe deeply into the posterior ribcage for 30-45s per side."
+    },
+    {
+      "id": "ex-3",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 1",
+      "name": "Floor Slide with Diaphragmatic Breathing",
+      "category": "Corrective / T-Spine",
+      "cues": "Lie supine with knees bent and lower back gently pressed to floor. Slide forearms overhead only as far as wrists and elbows stay grounded."
+    },
+    {
+      "id": "ex-4",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 1",
+      "name": "Kettlebell Arm Bar",
+      "category": "Scapular Stability",
+      "cues": "Press light KB vertically, roll onto side/hip while keeping eyes on bell and shoulder packed away from ear. Hold 20-30s."
+    },
+    {
+      "id": "ex-5",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 1",
+      "name": "Prone YTWL",
+      "category": "Scapular Control",
+      "cues": "Lie prone with forehead supported. Lift thumbs toward ceiling in Y, T, W, and L positions with 2-second isometric pause."
+    },
+    {
+      "id": "ex-6",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 1",
+      "name": "Quadruped T-Spine Rotation",
+      "category": "Thoracic Mobility",
+      "cues": "Sit hips back toward heels to lock lumbar spine. Place hand behind head and rotate elbow toward ceiling while exhaling."
+    },
+    {
+      "id": "ex-7",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 1",
+      "name": "Bretzel Stretch",
+      "category": "T-Spine & Hip Mobility",
+      "cues": "Side-lying position: hold top knee down with bottom hand, grab bottom ankle with top hand, and rotate upper shoulder toward floor."
+    },
+    {
+      "id": "ex-8",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 2 & 3",
+      "name": "Half-Kneeling Landmine Press",
+      "category": "Upper Body Push",
+      "cues": "Down-knee directly under hip, squeeze glute, brace core, and press landmine arc overhead without flaring ribs."
+    },
+    {
+      "id": "ex-9",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 2 & 3",
+      "name": "Single-Arm Dumbbell Row",
+      "category": "Upper Body Pull",
+      "cues": "Support on bench with neutral spine. Pull elbow toward hip pocket, avoiding anterior shoulder roll at top."
+    },
+    {
+      "id": "ex-10",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 2 & 3",
+      "name": "Kettlebell Halo",
+      "category": "Shoulder Warm-Up",
+      "cues": "Hold KB upside down by horns. Orbit closely around head while keeping ribcage stacked over pelvis."
+    },
+    {
+      "id": "ex-11",
+      "pattern": "Shoulder Mobility",
+      "targetScore": "Score 2 & 3",
+      "name": "Half-Kneeling Cable Pulldown",
+      "category": "Upper Body Pull",
+      "cues": "Tall posture in half-kneeling stance. Drive elbows down and back, finishing with forearms vertical."
+    },
+    {
+      "id": "ex-12",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 1",
+      "name": "Ankle Band Distraction Mobilization",
+      "category": "Ankle Mobility",
+      "cues": "Place heavy band low across talus bone. Drive knee forward over 2nd/3rd toe while keeping heel planted."
+    },
+    {
+      "id": "ex-13",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 1",
+      "name": "Half-Kneeling Ankle Dorsiflexion",
+      "category": "Ankle Mobility",
+      "cues": "In half-kneeling, rock knee past toes without heel lift. Hold end range for 3 seconds per rep."
+    },
+    {
+      "id": "ex-14",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 1",
+      "name": "Pole/TRX Assisted Deep Squat",
+      "category": "Squat Patterning",
+      "cues": "Hold TRX straps or vertical pole for counterbalance. Sit straight down between heels with chest proud."
+    },
+    {
+      "id": "ex-15",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 1",
+      "name": "Assisted Squat with Dowel",
+      "category": "Squat Patterning",
+      "cues": "Press dowel firmly into floor in front of feet to engage anterior core while descending into full depth."
+    },
+    {
+      "id": "ex-16",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 1",
+      "name": "Deep Squat Hold with T-Spine Rotation",
+      "category": "Mobility / Warm-Up",
+      "cues": "Hold bottom of bodyweight squat (heels elevated on wedge if needed). Anchor one elbow inside knee and reach opposite arm skyward."
+    },
+    {
+      "id": "ex-17",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 1",
+      "name": "Quad Rocking with Dorsiflexion",
+      "category": "Hip & Ankle Mobility",
+      "cues": "Start on hands and knees with toes tucked under. Rock hips smoothly back toward heels while maintaining neutral lumbar curve."
+    },
+    {
+      "id": "ex-18",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 1",
+      "name": "Landmine Box Squat",
+      "category": "Strength Regression",
+      "cues": "Hold landmine at chest for anterior counterbalance. Sit back to box with control, pause without relaxing, and drive up."
+    },
+    {
+      "id": "ex-19",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 2 & 3",
+      "name": "Kettlebell Goblet Squat with Curl",
+      "category": "Squat Patterning",
+      "cues": "At bottom of goblet squat, perform a controlled bicep curl to reinforce upright torso and hip mobility before standing."
+    },
+    {
+      "id": "ex-20",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 2 & 3",
+      "name": "Goblet Squat",
+      "category": "Lower Body Squat",
+      "cues": "Hold DB/KB tight to sternum, elbows tucked. Pull yourself down between knees and drive evenly through whole foot."
+    },
+    {
+      "id": "ex-21",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 2 & 3",
+      "name": "Barbell Back Squat",
+      "category": "Primary Lower Strength",
+      "cues": "Brace 360 degrees before unracking. Control descent to parallel or below while keeping knees tracking over toes."
+    },
+    {
+      "id": "ex-22",
+      "pattern": "Deep Squat",
+      "targetScore": "Score 2 & 3",
+      "name": "Dowel Overhead Deep Squat",
+      "category": "Movement Prep",
+      "cues": "Press PVC dowel overhead with active shoulders. Descend into full squat keeping dowel aligned over mid-foot."
+    },
+    {
+      "id": "ex-23",
+      "pattern": "Hurdle Step",
+      "targetScore": "Score 1",
+      "name": "Hurdle Step Over Dowel",
+      "category": "Single-Leg Balance",
+      "cues": "Set hurdle string just below tibial tuberosity. Stand tall on stance leg, step over cleanly without hip hike or trunk lean."
+    },
+    {
+      "id": "ex-24",
+      "pattern": "Hurdle Step",
+      "targetScore": "Score 1",
+      "name": "Cook Hip Lift",
+      "category": "Glute Activation",
+      "cues": "Supine, hug one knee tightly to chest (pinning tennis ball) to lock pelvis. Drive opposite heel to extend hip fully."
+    },
+    {
+      "id": "ex-25",
+      "pattern": "Hurdle Step",
+      "targetScore": "Score 1",
+      "name": "Heel-Elevated Glute Bridge",
+      "category": "Posterior Chain",
+      "cues": "Place heels on low box/bench. Exhale ribs down, posterior pelvic tilt, and lift hips using hamstrings and glutes."
+    },
+    {
+      "id": "ex-26",
+      "pattern": "Hurdle Step",
+      "targetScore": "Score 1",
+      "name": "Assisted 1-Leg Glute Bridge with Band Kick",
+      "category": "Hip Flexor / Glute",
+      "cues": "Loop mini-band around feet. Hold one knee up in flexion while bridging on stance leg to build pelvic dissociation."
+    },
+    {
+      "id": "ex-27",
+      "pattern": "Hurdle Step",
+      "targetScore": "Score 2 & 3",
+      "name": "Landmine Assisted Single-Leg RDL",
+      "category": "Single-Leg Hinge",
+      "cues": "Hold landmine end in opposite hand of stance leg. Hinge hips back with soft knee and square pelvis."
+    },
+    {
+      "id": "ex-28",
+      "pattern": "Hurdle Step",
+      "targetScore": "Score 2 & 3",
+      "name": "Single-Leg Box Step-Up",
+      "category": "Single-Leg Strength",
+      "cues": "Drive through full stance foot on 12-16\" box without pushing off trailing toes. Control 3-second eccentric down."
+    },
+    {
+      "id": "ex-29",
+      "pattern": "Hurdle Step",
+      "targetScore": "Score 2 & 3",
+      "name": "Marching Farmer Carry",
+      "category": "Gait & Core Stability",
+      "cues": "Hold heavy DBs/KBs at sides. March slowly with 2-second knee-up pause, avoiding lateral pelvic drop."
+    },
+    {
+      "id": "ex-30",
+      "pattern": "Inline Lunge",
+      "targetScore": "Score 1",
+      "name": "Half-Kneeling Hip Flexor Stretch",
+      "category": "Hip Mobility",
+      "cues": "90/90 stance. Tuck tailbone under (posterior tilt) and squeeze rear glute until stretch is felt in front of hip."
+    },
+    {
+      "id": "ex-31",
+      "pattern": "Inline Lunge",
+      "targetScore": "Score 1",
+      "name": "Couch Stretch",
+      "category": "Quad & Hip Flexor",
+      "cues": "Rear shin vertical against wall/bench, front foot planted. Maintain braced abs and upright torso."
+    },
+    {
+      "id": "ex-32",
+      "pattern": "Inline Lunge",
+      "targetScore": "Score 1",
+      "name": "Assisted Reverse Lunge",
+      "category": "Split-Stance Control",
+      "cues": "Hold TRX straps or rack lightly for balance. Step back softly, kiss back knee to pad, and drive up through front heel."
+    },
+    {
+      "id": "ex-33",
+      "pattern": "Inline Lunge",
+      "targetScore": "Score 1",
+      "name": "Landmine Split Squat",
+      "category": "Split-Stance Strength",
+      "cues": "Hold landmine at chest in split stance. Drop straight down with vertical shin and balanced weight distribution."
+    },
+    {
+      "id": "ex-34",
+      "pattern": "Inline Lunge",
+      "targetScore": "Score 2 & 3",
+      "name": "Bulgarian Split Squat",
+      "category": "Single-Leg Strength",
+      "cues": "Rear laces resting on bench. Hinge slightly forward at torso and descend smoothly with stable front knee."
+    },
+    {
+      "id": "ex-35",
+      "pattern": "Inline Lunge",
+      "targetScore": "Score 2 & 3",
+      "name": "Dumbbell Walking Lunge",
+      "category": "Dynamic Lunge",
+      "cues": "Take controlled stride lengths, keeping front knee aligned with toes and torso tall through each step."
+    },
+    {
+      "id": "ex-36",
+      "pattern": "Active Straight-Leg Raise",
+      "targetScore": "Score 1",
+      "name": "Active Hamstring Stretch with Strap",
+      "category": "Hamstring Mobility",
+      "cues": "Supine with strap around arch. Keep opposite leg pressed flat into floor with toes pulled up while raising strapped leg."
+    },
+    {
+      "id": "ex-37",
+      "pattern": "Active Straight-Leg Raise",
+      "targetScore": "Score 1",
+      "name": "Active Straight Leg Raise with Band Assist",
+      "category": "Core & Hip Dissociation",
+      "cues": "Anchor light band to top foot for assistance. Exhale fully to engage anterior core while lowering opposite leg slowly."
+    },
+    {
+      "id": "ex-38",
+      "pattern": "Active Straight-Leg Raise",
+      "targetScore": "Score 1",
+      "name": "Leg Lowering with Dowel",
+      "category": "Anterior Core & Hamstring",
+      "cues": "Press hands into dowel held vertically over chest while keeping both legs straight and lowering one heel at a time."
+    },
+    {
+      "id": "ex-39",
+      "pattern": "Active Straight-Leg Raise",
+      "targetScore": "Score 2 & 3",
+      "name": "Romanian Deadlift (RDL)",
+      "category": "Primary Hinge",
+      "cues": "Soft knee bend, push hips straight back until hamstrings reach full tension, keeping barbell/DBs shaving thighs."
+    },
+    {
+      "id": "ex-40",
+      "pattern": "Active Straight-Leg Raise",
+      "targetScore": "Score 2 & 3",
+      "name": "Trap Bar Deadlift",
+      "category": "Primary Lower Strength",
+      "cues": "Center inside handles, wedge hips down with flat back, push floor away and finish tall with glutes."
+    },
+    {
+      "id": "ex-41",
+      "pattern": "Active Straight-Leg Raise",
+      "targetScore": "Score 2 & 3",
+      "name": "Kettlebell Swing",
+      "category": "Explosive Hinge",
+      "cues": "Hike bell high into groin, snap hips forward forcefully to float bell to chest height without leaning back."
+    },
+    {
+      "id": "ex-42",
+      "pattern": "Trunk Stability Push-Up",
+      "targetScore": "Score 1",
+      "name": "Crocodile Breathing",
+      "category": "Diaphragmatic Core",
+      "cues": "Lie prone with forehead on hands. Inhale 360 degrees into belly and lower back, expanding ribs laterally."
+    },
+    {
+      "id": "ex-43",
+      "pattern": "Trunk Stability Push-Up",
+      "targetScore": "Score 1",
+      "name": "Incline Push-Up",
+      "category": "Push Regression",
+      "cues": "Hands elevated on bench/barbell at height allowing rigid plank from head to heels. Lower chest to edge with elbows at 45 degrees."
+    },
+    {
+      "id": "ex-44",
+      "pattern": "Trunk Stability Push-Up",
+      "targetScore": "Score 1",
+      "name": "High Plank Shoulder Tap",
+      "category": "Anti-Extension / Anti-Rotation",
+      "cues": "Feet wider than shoulders. Tap opposite shoulder slowly without letting hips sway or lower back sag."
+    },
+    {
+      "id": "ex-45",
+      "pattern": "Trunk Stability Push-Up",
+      "targetScore": "Score 2 & 3",
+      "name": "Push-Up",
+      "category": "Upper Body Push",
+      "cues": "Move body as one rigid unit. Chest touches floor first, screw hands into ground to press back up."
+    },
+    {
+      "id": "ex-46",
+      "pattern": "Trunk Stability Push-Up",
+      "targetScore": "Score 2 & 3",
+      "name": "Front Plank (RKC Style)",
+      "category": "Anterior Core",
+      "cues": "Pull elbows toward toes and squeeze glutes/quads maximally for 15-20s high-tension bouts."
+    },
+    {
+      "id": "ex-47",
+      "pattern": "Trunk Stability Push-Up",
+      "targetScore": "Score 2 & 3",
+      "name": "Barbell Bench Press",
+      "category": "Primary Upper Push",
+      "cues": "Set upper back arch, plant feet firmly, lower bar to mid-chest with forearms vertical, press smoothly."
+    },
+    {
+      "id": "ex-48",
+      "pattern": "Rotary Stability",
+      "targetScore": "Score 1",
+      "name": "Hard Rolling",
+      "category": "Reflexive Core",
+      "cues": "Supine with arms/legs extended. Initiate upper-body roll using only eyes, head, and arm reach—keep lower body completely dead weight."
+    },
+    {
+      "id": "ex-49",
+      "pattern": "Rotary Stability",
+      "targetScore": "Score 1",
+      "name": "Bird Dog",
+      "category": "Quadruped Stability",
+      "cues": "Hands under shoulders, knees under hips. Extend opposite arm and heel long without shifting pelvis or overarching lumbar spine."
+    },
+    {
+      "id": "ex-50",
+      "pattern": "Rotary Stability",
+      "targetScore": "Score 1",
+      "name": "Bear Crawl Hold",
+      "category": "Tri-Planar Core",
+      "cues": "Hover knees 1 inch off floor with flat back (balance foam roller on lumbar). Breathe steadily for 20-30s."
+    },
+    {
+      "id": "ex-51",
+      "pattern": "Rotary Stability",
+      "targetScore": "Score 1",
+      "name": "Half-Kneeling Pallof Press",
+      "category": "Anti-Rotation Core",
+      "cues": "In 90/90 stance, press cable/band straight out from sternum and hold 2 seconds against lateral pull."
+    },
+    {
+      "id": "ex-52",
+      "pattern": "Rotary Stability",
+      "targetScore": "Score 2 & 3",
+      "name": "Standing Pallof Press",
+      "category": "Anti-Rotation Core",
+      "cues": "Athletic quarter-squat stance. Press handle out without torso twist; control return to chest."
+    },
+    {
+      "id": "ex-53",
+      "pattern": "Rotary Stability",
+      "targetScore": "Score 2 & 3",
+      "name": "Suitcase Carry",
+      "category": "Lateral Core Stability",
+      "cues": "Carry single heavy KB/DB on one side. Walk tall without leaning toward or away from the load."
+    }
+  ],
+  "exerciseVideos": {},
+  "mainLifts": [
+    {
+      "id": "lift-1",
+      "name": "Squat",
+      "weight": 115,
+      "reps": 5
+    },
+    {
+      "id": "lift-2",
+      "name": "Bench",
+      "weight": 155,
+      "reps": 1
+    },
+    {
+      "id": "lift-3",
+      "name": "Deadlift",
+      "weight": 225,
+      "reps": 3
+    }
+  ]
+}

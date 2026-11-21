@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Coach & Client Program Viewer | FMS & Programming Portal</title>
+  <!-- PWA Meta Tags for iOS & Android Home Screen Installation -->
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FMS Tracker" />
+  <link id="pwa-apple-touch-icon" rel="apple-touch-icon" href="" />
+  <link id="pwa-manifest-link" rel="manifest" href="" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            slateDark: '#0f172a',
+            slateCard: '#1e293b',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Custom scrollbar & print rules */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+      }
+      .print-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Toast Notification Banner (Replaces alert) -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-lg border-b border-slate-800 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between py-3 gap-3">
+        <!-- Brand Logo -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-slate-950 font-extrabold text-lg shadow-md">
+            <i class="fa-solid fa-dumbbell"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-base sm:text-lg font-bold tracking-tight leading-tight">Coach & Client Program Viewer</h1>
+              <span id="network-status-pill" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" title="Offline caching active for gym use">
+                <span id="network-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span id="network-status-text">Online • Offline Ready</span>
+              </span>
+            </div>
+            <p class="text-xs text-slate-400">FMS-Driven Programming & Progress Portal</p>
+          </div>
+        </div>
+
+        <!-- Mode Toggle & Import/Export Controls -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+          <!-- Install Mobile App (PWA) Button -->
+          <button id="btn-install-pwa" onclick="handleInstallAppClick()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-extrabold shadow-sm transition flex items-center gap-1.5" title="Install onto iPhone or Android Home Screen">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+            <span>Install App</span>
+          </button>
+
+          <!-- Client View / Coach Edit Mode Toggle -->
+          <div class="bg-slate-800 p-1 rounded-xl flex items-center border border-slate-700">
+            <button id="btn-mode-client" onclick="setAppMode('client')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-emerald-500 text-slate-950 shadow">
+              <i class="fa-solid fa-user-check"></i>
+              <span>Client View</span>
+            </button>
+            <button id="btn-mode-coach" onclick="setAppMode('coach')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-slate-300 hover:text-white">
+              <i class="fa-solid fa-pen-to-square"></i>
+              <span>Coach Edit</span>
+            </button>
+          </div>
+
+          <!-- Import / Export Dropdown Trigger -->
+          <button onclick="openDataModal()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5" title="Import CSV/JSON or Export Workout">
+            <i class="fa-solid fa-file-import text-emerald-400"></i>
+            <span class="hidden sm:inline">Import / Export</span>
+          </button>
+
+          <!-- Print Button -->
+          <button onclick="window.print()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5" title="Print Workout Sheet">
+            <i class="fa-solid fa-print text-teal-400"></i>
+            <span class="hidden md:inline">Print</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 Core Spreadsheet Tabs Navigation -->
+      <nav class="flex overflow-x-auto gap-1 pt-1 pb-0 border-t border-slate-800/80 scrollbar-none">
+        <button onclick="switchTab('tracker')" id="tab-btn-tracker" class="tab-nav-btn whitespace-nowrap px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-emerald-400 text-emerald-400 flex items-center gap-2 transition">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span>4-Week Program Tracker</span>
+        </button>
+        <button onclick="switchTab('fms')" id="tab-btn-fms" class="tab-nav-btn whitespace-nowrap px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
+          <i class="fa-solid fa-person-walking"></i>
+          <span>FMS Assessment & Recommendations</span>
+        </button>
+        <button onclick="switchTab('library')" id="tab-btn-library" class="tab-nav-btn whitespace-nowrap px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
+          <i class="fa-solid fa-book-open"></i>
+          <span>Exercise Library</span>
+          <span id="library-count-badge" class="px-1.5 py-0.5 text-[10px] rounded-full bg-slate-800 text-emerald-400 font-bold">52</span>
+        </button>
+        <button onclick="switchTab('calculator')" id="tab-btn-calculator" class="tab-nav-btn whitespace-nowrap px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
+          <i class="fa-solid fa-calculator"></i>
+          <span>1RM & RPE Reference</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Client Header Banner -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 print-card">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="flex items-start sm:items-center gap-4">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-slate-900 text-emerald-400 flex items-center justify-center text-xl font-bold shrink-0 shadow-inner">
+            <span id="client-initials">AM</span>
+          </div>
+          <div class="space-y-1 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Active Mesocycle</span>
+              <span id="header-fms-summary-badge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                FMS Guardrails Active
+              </span>
+            </div>
+            <!-- Editable Client Name & Phase -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pt-1">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-semibold text-slate-400 uppercase">Client:</span>
+                <input id="client-name-input" type="text" value="Alex Mercer" onchange="updateClientMeta()" class="coach-editable font-bold text-lg text-slate-900 bg-transparent border-b border-transparent focus:border-emerald-500 focus:outline-none px-1 rounded transition" />
+              </div>
+              <div class="hidden sm:block text-slate-300">|</div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-semibold text-slate-400 uppercase">Phase:</span>
+                <input id="client-phase-input" type="text" value="Block 1: Corrective Foundation & Strength Base" onchange="updateClientMeta()" class="coach-editable font-semibold text-sm text-teal-700 bg-transparent border-b border-transparent focus:border-emerald-500 focus:outline-none px-1 rounded w-full sm:w-80 transition" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coach Notes Box -->
+        <div class="lg:w-96 bg-slate-50 rounded-xl p-3 border border-slate-200/80">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <i class="fa-solid fa-clipboard-list text-emerald-600"></i> Coach Focus & Notes
+            </span>
+            <span id="mode-indicator-pill" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-700">Client Mode</span>
+          </div>
+          <textarea id="coach-notes-input" rows="2" onchange="updateClientMeta()" class="coach-editable w-full text-xs text-slate-700 bg-transparent resize-none focus:outline-none focus:bg-white rounded p-1 transition" placeholder="Enter key programming priorities...">Prioritize Shoulder Mobility & Ankle Dorsiflexion drills in warm-up before main lower/upper lifts. Leave 2 reps in reserve (RPE 8) on primary compound sets.</textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: 4-WEEK PROGRAM TRACKER                                       -->
+    <!-- =================================================================== -->
+    <div id="tab-content-tracker" class="tab-panel space-y-6">
+
+      <!-- Week Selector & Action Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 no-print">
+        <div class="flex flex-wrap items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
+          <button onclick="selectWeek(1)" id="week-pill-1" class="week-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition bg-slate-900 text-white shadow">Week 1</button>
+          <button onclick="selectWeek(2)" id="week-pill-2" class="week-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-slate-600 hover:bg-slate-100">Week 2</button>
+          <button onclick="selectWeek(3)" id="week-pill-3" class="week-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-slate-600 hover:bg-slate-100">Week 3</button>
+          <button onclick="selectWeek(4)" id="week-pill-4" class="week-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-slate-600 hover:bg-slate-100">Week 4</button>
+          <button onclick="selectWeek('all')" id="week-pill-all" class="week-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-slate-600 hover:bg-slate-100">All Weeks</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="addWorkoutDay()" class="coach-only-btn px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-plus text-emerald-400"></i>
+            <span>Add Workout Day</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic KPI Summary Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Exercises</p>
+            <p id="kpi-exercises" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">0</p>
+            <p id="kpi-completed-sub" class="text-[11px] font-medium text-emerald-600 mt-0.5">0 completed</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Sets</p>
+            <p id="kpi-sets" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">0</p>
+            <p class="text-[11px] font-medium text-slate-400 mt-0.5">Working sets</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Volume</p>
+            <p id="kpi-volume" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">0 <span class="text-sm font-semibold text-slate-400">lbs</span></p>
+            <p class="text-[11px] font-medium text-slate-400 mt-0.5">Sets × Reps × Load</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-weight-hanging"></i>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Average RPE</p>
+            <p id="kpi-rpe" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">0.0</p>
+            <p id="kpi-rpe-sub" class="text-[11px] font-medium text-amber-600 mt-0.5">Target intensity</p>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-gauge-high"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workout Days Container -->
+      <div id="workout-days-container" class="space-y-6">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: FMS ASSESSMENT & RECOMMENDATIONS                             -->
+    <!-- =================================================================== -->
+    <div id="tab-content-fms" class="tab-panel hidden space-y-6">
+
+      <!-- FMS Summary Counters -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-5 border-l-4 border-rose-500 border-y border-r border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-rose-600">Pain / Medical Flags (0)</p>
+            <p id="fms-count-0" class="text-3xl font-extrabold text-slate-900 mt-1">0</p>
+            <p class="text-xs text-slate-500 mt-0.5">Requires medical evaluation</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border-l-4 border-amber-500 border-y border-r border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-amber-600">Corrective Patterns (1-2)</p>
+            <p id="fms-count-12" class="text-3xl font-extrabold text-slate-900 mt-1">0</p>
+            <p class="text-xs text-slate-500 mt-0.5">Modify load & prioritize drills</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-wrench"></i>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border-l-4 border-emerald-500 border-y border-r border-slate-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-emerald-600">Optimal Patterns (3)</p>
+            <p id="fms-count-3" class="text-3xl font-extrabold text-slate-900 mt-1">0</p>
+            <p class="text-xs text-slate-500 mt-0.5">Cleared for full load</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7-Pattern FMS Screening Scorecard -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-slate-900 text-white px-5 py-4 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-base font-bold flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
+              7-Pattern FMS Screening Scorecard
+            </h2>
+            <p class="text-xs text-slate-400">Adjust Left/Right scores or Clearing Tests to dynamically update exercise guardrails</p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 uppercase font-semibold">Composite Score:</span>
+            <span id="fms-total-score" class="ml-1.5 px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-sm">15 / 21</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <th class="py-3 px-4">FMS Movement Pattern</th>
+                <th class="py-3 px-3 text-center">Raw Score (L)</th>
+                <th class="py-3 px-3 text-center">Raw Score (R)</th>
+                <th class="py-3 px-3 text-center">Clearing Test</th>
+                <th class="py-3 px-3 text-center">Final Score</th>
+                <th class="py-3 px-3 text-center">Asymmetry</th>
+                <th class="py-3 px-4">Pattern Status & Action</th>
+              </tr>
+            </thead>
+            <tbody id="fms-scorecard-body" class="divide-y divide-slate-100 text-sm">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Dynamic Exercise Guardrails & Corrective Recommendations -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-teal-600"></i>
+              Active Exercise Guardrails & Corrective Recommendations
+            </h3>
+            <p class="text-xs text-slate-500">Automatically filtered from the FMS Assessment rules based on current pattern scores</p>
+          </div>
+        </div>
+
+        <div id="fms-guardrails-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Populated dynamically by JS -->
+        </div>
+
+        <!-- Trainer Comments Box -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <label for="fms-trainer-comments" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+            Trainer Assessment Comments & Notes
+          </label>
+          <textarea id="fms-trainer-comments" rows="2" onchange="saveState()" class="w-full text-sm text-slate-800 bg-white border border-slate-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Add specific FMS observations, pain triggers, or re-screen dates...">Left shoulder internal rotation deficit noted during Shoulder Mobility screen; keep overhead barbell/DB pressing restricted until score reaches >= 2. Re-test in 4 weeks.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 3: EXERCISE LIBRARY (248-MOVEMENT DATABASE)                     -->
+    <!-- =================================================================== -->
+    <div id="tab-content-library" class="tab-panel hidden space-y-6">
+
+      <!-- Search & Filter Controls -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">FMS-Indexed Exercise Library</h2>
+            <p class="text-xs text-slate-500">Filter by FMS Movement Pattern, Target FMS Score tier, or Category, and add straight to your workout plan</p>
+          </div>
+          <!-- CSV Upload Trigger for full 248 rows -->
+          <div class="flex items-center gap-2">
+            <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-2 border border-slate-200">
+              <i class="fa-solid fa-file-csv text-emerald-600"></i>
+              <span>Load Exercise_Library.csv</span>
+              <input type="file" accept=".csv" onchange="handleExerciseLibraryCSV(event)" class="hidden" />
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <!-- Search Input -->
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <input id="lib-search" type="text" oninput="renderExerciseLibrary()" placeholder="Search exercise or cue..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+          </div>
+
+          <!-- Pattern Filter -->
+          <select id="lib-filter-pattern" onchange="renderExerciseLibrary()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700">
+            <option value="ALL">All 7 FMS Patterns</option>
+            <option value="Deep Squat">Deep Squat</option>
+            <option value="Hurdle Step">Hurdle Step</option>
+            <option value="Inline Lunge">Inline Lunge</option>
+            <option value="Shoulder Mobility">Shoulder Mobility</option>
+            <option value="Active Straight-Leg Raise">Active Straight-Leg Raise</option>
+            <option value="Trunk Stability Push-Up">Trunk Stability Push-Up</option>
+            <option value="Rotary Stability">Rotary Stability</option>
+          </select>
+
+          <!-- Target Score Filter -->
+          <select id="lib-filter-score" onchange="renderExerciseLibrary()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700">
+            <option value="ALL">All Target FMS Scores</option>
+            <option value="Score 1">Score 1 (Corrective / Mobility)</option>
+            <option value="Score 2 & 3">Score 2 & 3 (Strength & Performance)</option>
+          </select>
+
+          <!-- Category Filter -->
+          <select id="lib-filter-category" onchange="renderExerciseLibrary()" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700">
+            <option value="ALL">All Categories</option>
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+          <span>Showing <strong id="lib-visible-count" class="text-slate-900">0</strong> exercises</span>
+          <button onclick="resetLibraryFilters()" class="text-teal-600 hover:text-teal-700 font-semibold">Reset Filters</button>
+        </div>
+      </div>
+
+      <!-- Exercise Cards Grid -->
+      <div id="exercise-library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 4: 1RM & RPE REFERENCE CALCULATOR                               -->
+    <!-- =================================================================== -->
+    <div id="tab-content-calculator" class="tab-panel hidden space-y-6">
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Column: RPE / RIR Reference Chart (5 cols) -->
+        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-fit">
+          <div class="bg-slate-900 text-white px-5 py-4">
+            <h2 class="text-base font-bold flex items-center gap-2">
+              <i class="fa-solid fa-gauge text-emerald-400"></i>
+              RPE / RIR Reference Chart
+            </h2>
+            <p class="text-xs text-slate-400">Rate of Perceived Exertion & Reps in Reserve Guide</p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th class="py-2.5 px-4">RPE</th>
+                  <th class="py-2.5 px-3">RIR</th>
+                  <th class="py-2.5 px-4">Intensity Description</th>
+                </tr>
+              </thead>
+              <tbody id="rpe-reference-body" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Column: Main Lifts 1RM Estimator & Percentage Table (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-900 text-white px-5 py-4 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 class="text-base font-bold flex items-center gap-2">
+                  <i class="fa-solid fa-dumbbell text-teal-400"></i>
+                  Main Lifts 1RM Estimator
+                </h2>
+                <p class="text-xs text-slate-400">Epley Formula: <code class="text-emerald-300">Weight × (1 + Reps / 30)</code></p>
+              </div>
+              <button onclick="addCustomLift()" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> Add Lift
+              </button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <th class="py-3 px-4">Lift Name</th>
+                    <th class="py-3 px-3 text-center">Weight (lbs)</th>
+                    <th class="py-3 px-3 text-center">Reps</th>
+                    <th class="py-3 px-4 text-right">Est. 1RM (lbs)</th>
+                    <th class="py-3 px-3 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="lifts-1rm-body" class="divide-y divide-slate-100 text-sm">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Training Load Percentage Table (95% down to 50%) -->
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 class="text-base font-bold text-slate-900">Training Load Percentage Table (95% – 50%)</h3>
+                <p class="text-xs text-slate-500">Working weights calculated in 5% increments from Estimated 1RM</p>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead id="percentage-table-head">
+                  <!-- Populated by JS -->
+                </thead>
+                <tbody id="percentage-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: EXERCISE COACHING CUE & DEMO MODAL                           -->
+  <!-- ===================================================================== -->
+  <div id="modal-exercise-detail" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
+      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <i class="fa-solid fa-play"></i>
+          </span>
+          <h3 id="modal-ex-title" class="font-bold text-base">Exercise Details</h3>
+        </div>
+        <button onclick="closeModal('modal-exercise-detail')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div class="p-5 space-y-4">
+        <div class="flex flex-wrap gap-2" id="modal-ex-badges"></div>
+
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Coaching Focus & Regressions</h4>
+          <p id="modal-ex-cues" class="text-sm text-slate-800 leading-relaxed"></p>
+        </div>
+
+        <!-- Video / Demo Link Section -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Demo Video / Reference URL</label>
+          <div class="flex gap-2">
+            <input id="modal-ex-video-input" type="url" placeholder="https://youtube.com/watch?v=..." class="flex-1 text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <button onclick="saveExerciseVideoLink()" class="px-3 py-2 rounded-xl bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800">Save Link</button>
+          </div>
+          <div id="modal-ex-video-preview" class="pt-1"></div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+          <button onclick="closeModal('modal-exercise-detail')" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">Close</button>
+          <button id="modal-ex-add-btn" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> Add to Program
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: ADD EXERCISE TO PROGRAM MODAL                                -->
+  <!-- ===================================================================== -->
+  <div id="modal-add-to-program" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
+        <h3 class="font-bold text-base flex items-center gap-2">
+          <i class="fa-solid fa-calendar-plus text-emerald-400"></i>
+          Add Exercise to Program
+        </h3>
+        <button onclick="closeModal('modal-add-to-program')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Exercise</label>
+          <input id="add-prog-name" type="text" class="w-full text-sm font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Target Week</label>
+            <select id="add-prog-week" onchange="populateAddProgramDays()" class="w-full text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+              <option value="1">Week 1</option>
+              <option value="2">Week 2</option>
+              <option value="3">Week 3</option>
+              <option value="4">Week 4</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Target Day</label>
+            <select id="add-prog-day" class="w-full text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Section</label>
+          <select id="add-prog-section" class="w-full text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+            <option value="workout">Main Workout Block</option>
+            <option value="warmup">Warm-Up / Mobility Drill</option>
+          </select>
+        </div>
+
+        <div id="add-prog-prescription-fields" class="grid grid-cols-4 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Sets</label>
+            <input id="add-prog-sets" type="number" value="3" min="1" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Reps</label>
+            <input id="add-prog-reps" type="text" value="10" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Weight</label>
+            <input id="add-prog-weight" type="number" value="0" min="0" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">RPE</label>
+            <input id="add-prog-rpe" type="number" step="0.5" value="7.5" min="5" max="10" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-center" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Coaching Notes</label>
+          <input id="add-prog-notes" type="text" placeholder="Tempo, rest interval, or cue..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button onclick="closeModal('modal-add-to-program')" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">Cancel</button>
+          <button onclick="confirmAddExerciseToProgram()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold">Add to Workout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: CSV / JSON IMPORT & EXPORT MODAL                             -->
+  <!-- ===================================================================== -->
+  <div id="modal-data-io" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
+        <h3 class="font-bold text-base flex items-center gap-2">
+          <i class="fa-solid fa-database text-emerald-400"></i>
+          Import & Export Program Data
+        </h3>
+        <button onclick="closeModal('modal-data-io')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div class="p-5 space-y-5">
+        <!-- Export Section -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Export Client Program</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button onclick="exportProgramCSV()" class="px-4 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-xs font-bold flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-file-csv text-emerald-600 text-base"></i>
+              <span>Export 4-Week CSV</span>
+            </button>
+            <button onclick="exportFullJSON()" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 text-xs font-bold flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-file-code text-slate-600 text-base"></i>
+              <span>Export Full Backup (JSON)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Import Section -->
+        <div class="space-y-2 border-t border-slate-100 pt-4">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Import Spreadsheet CSV or JSON</h4>
+          <p class="text-xs text-slate-500">Upload your exported <code>4-Week_Program_Tracker.csv</code>, <code>Exercise_Library.csv</code>, or a saved JSON backup.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <label class="cursor-pointer px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-upload text-emerald-400"></i>
+              <span>Import Program CSV</span>
+              <input type="file" accept=".csv" onchange="handleProgramTrackerCSV(event)" class="hidden" />
+            </label>
+            <label class="cursor-pointer px-4 py-3 rounded-xl bg-teal-700 hover:bg-teal-600 text-white text-xs font-bold flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-file-arrow-up"></i>
+              <span>Import JSON Backup</span>
+              <input type="file" accept=".json" onchange="handleJSONImport(event)" class="hidden" />
+            </label>
+          </div>
+        </div>
+
+        <!-- Reset Demo Data -->
+        <div class="border-t border-slate-100 pt-4 flex items-center justify-between">
+          <span class="text-xs text-slate-500">Need a clean slate?</span>
+          <button onclick="resetToDefaultTemplate()" class="text-xs font-bold text-rose-600 hover:text-rose-700 underline">Reset to Default Template</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 4: PWA MOBILE APP INSTALL & HOSTING DEPLOYMENT GUIDE            -->
+  <!-- ===================================================================== -->
+  <div id="modal-pwa-install" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base leading-tight">Install Mobile App (PWA)</h3>
+            <p class="text-[11px] text-slate-400">Home screen icon + full offline gym mode</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-pwa-install')" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-5 overflow-y-auto">
+        <!-- Native One-Click Install Banner (Shown when browser supports beforeinstallprompt) -->
+        <div id="pwa-native-prompt-box" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <p class="text-xs font-extrabold uppercase tracking-wider text-emerald-800">Ready for One-Tap Install</p>
+            <p class="text-xs text-emerald-700 mt-0.5">Add <strong>FMS Program Tracker</strong> directly to your device home screen.</p>
+          </div>
+          <button onclick="triggerNativeInstallPrompt()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs shadow-sm shrink-0 transition">
+            Install Now
+          </button>
+        </div>
+
+        <!-- Client Instructions: iOS Safari & Android Chrome -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <!-- iPhone / iPad (Safari) -->
+          <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2.5">
+            <div class="flex items-center gap-2">
+              <i class="fa-brands fa-apple text-lg text-slate-900"></i>
+              <h4 class="font-bold text-sm text-slate-900">iPhone / iPad (Safari)</h4>
+            </div>
+            <ol class="text-xs text-slate-600 space-y-2 list-decimal list-inside">
+              <li>Open your hosted app link in <strong>Safari</strong>.</li>
+              <li>Tap the <strong>Share</strong> button <span class="inline-block px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[11px] font-bold"><i class="fa-solid fa-arrow-up-from-bracket text-sky-600"></i></span> at the bottom bar.</li>
+              <li>Scroll down and tap <strong>"Add to Home Screen"</strong>.</li>
+              <li>Tap <strong>Add</strong> — it launches full-screen like a native app!</li>
+            </ol>
+          </div>
+
+          <!-- Android (Chrome) -->
+          <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2.5">
+            <div class="flex items-center gap-2">
+              <i class="fa-brands fa-android text-lg text-emerald-600"></i>
+              <h4 class="font-bold text-sm text-slate-900">Android (Chrome)</h4>
+            </div>
+            <ol class="text-xs text-slate-600 space-y-2 list-decimal list-inside">
+              <li>Open your hosted app link in <strong>Chrome</strong>.</li>
+              <li>Tap the <strong>Menu (<i class="fa-solid fa-ellipsis-vertical"></i>)</strong> icon in the top right.</li>
+              <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+              <li>Confirm <strong>Install</strong> for offline gym access.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Coach Deployment Helper: Download Standalone PWA Files -->
+        <div class="bg-slate-900 text-white rounded-2xl p-4 space-y-3">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">For Coaches • Free Hosting</span>
+              <h4 class="font-bold text-sm mt-1">Deploy Online in 60 Seconds (Netlify / Vercel)</h4>
+              <p class="text-xs text-slate-300 mt-0.5">Download the complete 3-file PWA bundle (<code class="text-emerald-300">index.html</code>, <code class="text-emerald-300">manifest.json</code>, <code class="text-emerald-300">sw.js</code>) and drag the folder onto <strong>app.netlify.com/drop</strong> to get a permanent client link.</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button onclick="downloadPWABundle()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold transition flex items-center gap-2">
+              <i class="fa-solid fa-download"></i>
+              <span>Download PWA Files (index.html + manifest.json + sw.js)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+        <span id="pwa-sw-status-label" class="text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-check text-emerald-600"></i> Offline Cache Active
+        </span>
+        <button onclick="closeModal('modal-pwa-install')" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC                                          -->
+  <!-- ===================================================================== -->
+  <script>
+    // -----------------------------------------------------------------------
+    // 1. DEFAULT DATASET: EXERCISE LIBRARY (FROM UPLOADED CSV STRUCTURE)
+    // -----------------------------------------------------------------------
+    const DEFAULT_EXERCISE_LIBRARY = [
+      // Shoulder Mobility - Score 1
+      { id: 'ex-1', pattern: 'Shoulder Mobility', targetScore: 'Score 1', name: 'Band Shoulder Dislocators', category: 'Mobility / Warm-Up', cues: 'Use a wide grip on a light resistance band or PVC pipe. Keep ribs tucked down and move smoothly overhead without lumbar hyperextension.' },
+      { id: 'ex-2', pattern: 'Shoulder Mobility', targetScore: 'Score 1', name: 'Banded Overhead Lat Stretch', category: 'Mobility / Warm-Up', cues: 'Anchor band high, hinge hips back, keep thumb pointed up, and breathe deeply into the posterior ribcage for 30-45s per side.' },
+      { id: 'ex-3', pattern: 'Shoulder Mobility', targetScore: 'Score 1', name: 'Floor Slide with Diaphragmatic Breathing', category: 'Corrective / T-Spine', cues: 'Lie supine with knees bent and lower back gently pressed to floor. Slide forearms overhead only as far as wrists and elbows stay grounded.' },
+      { id: 'ex-4', pattern: 'Shoulder Mobility', targetScore: 'Score 1', name: 'Kettlebell Arm Bar', category: 'Scapular Stability', cues: 'Press light KB vertically, roll onto side/hip while keeping eyes on bell and shoulder packed away from ear. Hold 20-30s.' },
+      { id: 'ex-5', pattern: 'Shoulder Mobility', targetScore: 'Score 1', name: 'Prone YTWL', category: 'Scapular Control', cues: 'Lie prone with forehead supported. Lift thumbs toward ceiling in Y, T, W, and L positions with 2-second isometric pause.' },
+      { id: 'ex-6', pattern: 'Shoulder Mobility', targetScore: 'Score 1', name: 'Quadruped T-Spine Rotation', category: 'Thoracic Mobility', cues: 'Sit hips back toward heels to lock lumbar spine. Place hand behind head and rotate elbow toward ceiling while exhaling.' },
+      { id: 'ex-7', pattern: 'Shoulder Mobility', targetScore: 'Score 1', name: 'Bretzel Stretch', category: 'T-Spine & Hip Mobility', cues: 'Side-lying position: hold top knee down with bottom hand, grab bottom ankle with top hand, and rotate upper shoulder toward floor.' },
+      // Shoulder Mobility - Score 2 & 3
+      { id: 'ex-8', pattern: 'Shoulder Mobility', targetScore: 'Score 2 & 3', name: 'Half-Kneeling Landmine Press', category: 'Upper Body Push', cues: 'Down-knee directly under hip, squeeze glute, brace core, and press landmine arc overhead without flaring ribs.' },
+      { id: 'ex-9', pattern: 'Shoulder Mobility', targetScore: 'Score 2 & 3', name: 'Single-Arm Dumbbell Row', category: 'Upper Body Pull', cues: 'Support on bench with neutral spine. Pull elbow toward hip pocket, avoiding anterior shoulder roll at top.' },
+      { id: 'ex-10', pattern: 'Shoulder Mobility', targetScore: 'Score 2 & 3', name: 'Kettlebell Halo', category: 'Shoulder Warm-Up', cues: 'Hold KB upside down by horns. Orbit closely around head while keeping ribcage stacked over pelvis.' },
+      { id: 'ex-11', pattern: 'Shoulder Mobility', targetScore: 'Score 2 & 3', name: 'Half-Kneeling Cable Pulldown', category: 'Upper Body Pull', cues: 'Tall posture in half-kneeling stance. Drive elbows down and back, finishing with forearms vertical.' },
+
+      // Deep Squat - Score 1
+      { id: 'ex-12', pattern: 'Deep Squat', targetScore: 'Score 1', name: 'Ankle Band Distraction Mobilization', category: 'Ankle Mobility', cues: 'Place heavy band low across talus bone. Drive knee forward over 2nd/3rd toe while keeping heel planted.' },
+      { id: 'ex-13', pattern: 'Deep Squat', targetScore: 'Score 1', name: 'Half-Kneeling Ankle Dorsiflexion', category: 'Ankle Mobility', cues: 'In half-kneeling, rock knee past toes without heel lift. Hold end range for 3 seconds per rep.' },
+      { id: 'ex-14', pattern: 'Deep Squat', targetScore: 'Score 1', name: 'Pole/TRX Assisted Deep Squat', category: 'Squat Patterning', cues: 'Hold TRX straps or vertical pole for counterbalance. Sit straight down between heels with chest proud.' },
+      { id: 'ex-15', pattern: 'Deep Squat', targetScore: 'Score 1', name: 'Assisted Squat with Dowel', category: 'Squat Patterning', cues: 'Press dowel firmly into floor in front of feet to engage anterior core while descending into full depth.' },
+      { id: 'ex-16', pattern: 'Deep Squat', targetScore: 'Score 1', name: 'Deep Squat Hold with T-Spine Rotation', category: 'Mobility / Warm-Up', cues: 'Hold bottom of bodyweight squat (heels elevated on wedge if needed). Anchor one elbow inside knee and reach opposite arm skyward.' },
+      { id: 'ex-17', pattern: 'Deep Squat', targetScore: 'Score 1', name: 'Quad Rocking with Dorsiflexion', category: 'Hip & Ankle Mobility', cues: 'Start on hands and knees with toes tucked under. Rock hips smoothly back toward heels while maintaining neutral lumbar curve.' },
+      { id: 'ex-18', pattern: 'Deep Squat', targetScore: 'Score 1', name: 'Landmine Box Squat', category: 'Strength Regression', cues: 'Hold landmine at chest for anterior counterbalance. Sit back to box with control, pause without relaxing, and drive up.' },
+      // Deep Squat - Score 2 & 3
+      { id: 'ex-19', pattern: 'Deep Squat', targetScore: 'Score 2 & 3', name: 'Kettlebell Goblet Squat with Curl', category: 'Squat Patterning', cues: 'At bottom of goblet squat, perform a controlled bicep curl to reinforce upright torso and hip mobility before standing.' },
+      { id: 'ex-20', pattern: 'Deep Squat', targetScore: 'Score 2 & 3', name: 'Goblet Squat', category: 'Lower Body Squat', cues: 'Hold DB/KB tight to sternum, elbows tucked. Pull yourself down between knees and drive evenly through whole foot.' },
+      { id: 'ex-21', pattern: 'Deep Squat', targetScore: 'Score 2 & 3', name: 'Barbell Back Squat', category: 'Primary Lower Strength', cues: 'Brace 360 degrees before unracking. Control descent to parallel or below while keeping knees tracking over toes.' },
+      { id: 'ex-22', pattern: 'Deep Squat', targetScore: 'Score 2 & 3', name: 'Dowel Overhead Deep Squat', category: 'Movement Prep', cues: 'Press PVC dowel overhead with active shoulders. Descend into full squat keeping dowel aligned over mid-foot.' },
+
+      // Hurdle Step - Score 1
+      { id: 'ex-23', pattern: 'Hurdle Step', targetScore: 'Score 1', name: 'Hurdle Step Over Dowel', category: 'Single-Leg Balance', cues: 'Set hurdle string just below tibial tuberosity. Stand tall on stance leg, step over cleanly without hip hike or trunk lean.' },
+      { id: 'ex-24', pattern: 'Hurdle Step', targetScore: 'Score 1', name: 'Cook Hip Lift', category: 'Glute Activation', cues: 'Supine, hug one knee tightly to chest (pinning tennis ball) to lock pelvis. Drive opposite heel to extend hip fully.' },
+      { id: 'ex-25', pattern: 'Hurdle Step', targetScore: 'Score 1', name: 'Heel-Elevated Glute Bridge', category: 'Posterior Chain', cues: 'Place heels on low box/bench. Exhale ribs down, posterior pelvic tilt, and lift hips using hamstrings and glutes.' },
+      { id: 'ex-26', pattern: 'Hurdle Step', targetScore: 'Score 1', name: 'Assisted 1-Leg Glute Bridge with Band Kick', category: 'Hip Flexor / Glute', cues: 'Loop mini-band around feet. Hold one knee up in flexion while bridging on stance leg to build pelvic dissociation.' },
+      // Hurdle Step - Score 2 & 3
+      { id: 'ex-27', pattern: 'Hurdle Step', targetScore: 'Score 2 & 3', name: 'Landmine Assisted Single-Leg RDL', category: 'Single-Leg Hinge', cues: 'Hold landmine end in opposite hand of stance leg. Hinge hips back with soft knee and square pelvis.' },
+      { id: 'ex-28', pattern: 'Hurdle Step', targetScore: 'Score 2 & 3', name: 'Single-Leg Box Step-Up', category: 'Single-Leg Strength', cues: 'Drive through full stance foot on 12-16" box without pushing off trailing toes. Control 3-second eccentric down.' },
+      { id: 'ex-29', pattern: 'Hurdle Step', targetScore: 'Score 2 & 3', name: 'Marching Farmer Carry', category: 'Gait & Core Stability', cues: 'Hold heavy DBs/KBs at sides. March slowly with 2-second knee-up pause, avoiding lateral pelvic drop.' },
+
+      // Inline Lunge - Score 1
+      { id: 'ex-30', pattern: 'Inline Lunge', targetScore: 'Score 1', name: 'Half-Kneeling Hip Flexor Stretch', category: 'Hip Mobility', cues: '90/90 stance. Tuck tailbone under (posterior tilt) and squeeze rear glute until stretch is felt in front of hip.' },
+      { id: 'ex-31', pattern: 'Inline Lunge', targetScore: 'Score 1', name: 'Couch Stretch', category: 'Quad & Hip Flexor', cues: 'Rear shin vertical against wall/bench, front foot planted. Maintain braced abs and upright torso.' },
+      { id: 'ex-32', pattern: 'Inline Lunge', targetScore: 'Score 1', name: 'Assisted Reverse Lunge', category: 'Split-Stance Control', cues: 'Hold TRX straps or rack lightly for balance. Step back softly, kiss back knee to pad, and drive up through front heel.' },
+      { id: 'ex-33', pattern: 'Inline Lunge', targetScore: 'Score 1', name: 'Landmine Split Squat', category: 'Split-Stance Strength', cues: 'Hold landmine at chest in split stance. Drop straight down with vertical shin and balanced weight distribution.' },
+      // Inline Lunge - Score 2 & 3
+      { id: 'ex-34', pattern: 'Inline Lunge', targetScore: 'Score 2 & 3', name: 'Bulgarian Split Squat', category: 'Single-Leg Strength', cues: 'Rear laces resting on bench. Hinge slightly forward at torso and descend smoothly with stable front knee.' },
+      { id: 'ex-35', pattern: 'Inline Lunge', targetScore: 'Score 2 & 3', name: 'Dumbbell Walking Lunge', category: 'Dynamic Lunge', cues: 'Take controlled stride lengths, keeping front knee aligned with toes and torso tall through each step.' },
+
+      // Active Straight-Leg Raise - Score 1
+      { id: 'ex-36', pattern: 'Active Straight-Leg Raise', targetScore: 'Score 1', name: 'Active Hamstring Stretch with Strap', category: 'Hamstring Mobility', cues: 'Supine with strap around arch. Keep opposite leg pressed flat into floor with toes pulled up while raising strapped leg.' },
+      { id: 'ex-37', pattern: 'Active Straight-Leg Raise', targetScore: 'Score 1', name: 'Active Straight Leg Raise with Band Assist', category: 'Core & Hip Dissociation', cues: 'Anchor light band to top foot for assistance. Exhale fully to engage anterior core while lowering opposite leg slowly.' },
+      { id: 'ex-38', pattern: 'Active Straight-Leg Raise', targetScore: 'Score 1', name: 'Leg Lowering with Dowel', category: 'Anterior Core & Hamstring', cues: 'Press hands into dowel held vertically over chest while keeping both legs straight and lowering one heel at a time.' },
+      // Active Straight-Leg Raise - Score 2 & 3
+      { id: 'ex-39', pattern: 'Active Straight-Leg Raise', targetScore: 'Score 2 & 3', name: 'Romanian Deadlift (RDL)', category: 'Primary Hinge', cues: 'Soft knee bend, push hips straight back until hamstrings reach full tension, keeping barbell/DBs shaving thighs.' },
+      { id: 'ex-40', pattern: 'Active Straight-Leg Raise', targetScore: 'Score 2 & 3', name: 'Trap Bar Deadlift', category: 'Primary Lower Strength', cues: 'Center inside handles, wedge hips down with flat back, push floor away and finish tall with glutes.' },
+      { id: 'ex-41', pattern: 'Active Straight-Leg Raise', targetScore: 'Score 2 & 3', name: 'Kettlebell Swing', category: 'Explosive Hinge', cues: 'Hike bell high into groin, snap hips forward forcefully to float bell to chest height without leaning back.' },
+
+      // Trunk Stability Push-Up - Score 1
+      { id: 'ex-42', pattern: 'Trunk Stability Push-Up', targetScore: 'Score 1', name: 'Crocodile Breathing', category: 'Diaphragmatic Core', cues: 'Lie prone with forehead on hands. Inhale 360 degrees into belly and lower back, expanding ribs laterally.' },
+      { id: 'ex-43', pattern: 'Trunk Stability Push-Up', targetScore: 'Score 1', name: 'Incline Push-Up', category: 'Push Regression', cues: 'Hands elevated on bench/barbell at height allowing rigid plank from head to heels. Lower chest to edge with elbows at 45 degrees.' },
+      { id: 'ex-44', pattern: 'Trunk Stability Push-Up', targetScore: 'Score 1', name: 'High Plank Shoulder Tap', category: 'Anti-Extension / Anti-Rotation', cues: 'Feet wider than shoulders. Tap opposite shoulder slowly without letting hips sway or lower back sag.' },
+      // Trunk Stability Push-Up - Score 2 & 3
+      { id: 'ex-45', pattern: 'Trunk Stability Push-Up', targetScore: 'Score 2 & 3', name: 'Push-Up', category: 'Upper Body Push', cues: 'Move body as one rigid unit. Chest touches floor first, screw hands into ground to press back up.' },
+      { id: 'ex-46', pattern: 'Trunk Stability Push-Up', targetScore: 'Score 2 & 3', name: 'Front Plank (RKC Style)', category: 'Anterior Core', cues: 'Pull elbows toward toes and squeeze glutes/quads maximally for 15-20s high-tension bouts.' },
+      { id: 'ex-47', pattern: 'Trunk Stability Push-Up', targetScore: 'Score 2 & 3', name: 'Barbell Bench Press', category: 'Primary Upper Push', cues: 'Set upper back arch, plant feet firmly, lower bar to mid-chest with forearms vertical, press smoothly.' },
+
+      // Rotary Stability - Score 1
+      { id: 'ex-48', pattern: 'Rotary Stability', targetScore: 'Score 1', name: 'Hard Rolling', category: 'Reflexive Core', cues: 'Supine with arms/legs extended. Initiate upper-body roll using only eyes, head, and arm reach—keep lower body completely dead weight.' },
+      { id: 'ex-49', pattern: 'Rotary Stability', targetScore: 'Score 1', name: 'Bird Dog', category: 'Quadruped Stability', cues: 'Hands under shoulders, knees under hips. Extend opposite arm and heel long without shifting pelvis or overarching lumbar spine.' },
+      { id: 'ex-50', pattern: 'Rotary Stability', targetScore: 'Score 1', name: 'Bear Crawl Hold', category: 'Tri-Planar Core', cues: 'Hover knees 1 inch off floor with flat back (balance foam roller on lumbar). Breathe steadily for 20-30s.' },
+      { id: 'ex-51', pattern: 'Rotary Stability', targetScore: 'Score 1', name: 'Half-Kneeling Pallof Press', category: 'Anti-Rotation Core', cues: 'In 90/90 stance, press cable/band straight out from sternum and hold 2 seconds against lateral pull.' },
+      // Rotary Stability - Score 2 & 3
+      { id: 'ex-52', pattern: 'Rotary Stability', targetScore: 'Score 2 & 3', name: 'Standing Pallof Press', category: 'Anti-Rotation Core', cues: 'Athletic quarter-squat stance. Press handle out without torso twist; control return to chest.' },
+      { id: 'ex-53', pattern: 'Rotary Stability', targetScore: 'Score 2 & 3', name: 'Suitcase Carry', category: 'Lateral Core Stability', cues: 'Carry single heavy KB/DB on one side. Walk tall without leaning toward or away from the load.' }
+    ];
+
+    // -----------------------------------------------------------------------
+    // 2. FMS ASSESSMENT RULES (EXACT MATCH TO UPLOADED CSV)
+    // -----------------------------------------------------------------------
+    const FMS_PATTERN_DEFINITIONS = [
+      {
+        id: 'deep_squat',
+        name: 'Deep Squat',
+        bilateral: false,
+        defaultL: 2,
+        defaultR: 2,
+        clearing: 'Pass',
+        restricted: 'Heavy Barbell Back/Front Squats, Deep Overhead Squats, High-Impact Jump Squats.',
+        recommended: 'Ankle Band Distraction, Half-Kneeling Dorsiflexion, Pole/TRX Assisted Deep Squat, Landmine Box Squat, Goblet Squat (heels elevated if needed).',
+        focus: 'Improve ankle dorsiflexion, thoracic extension, and anterior core counterbalance before loading axial squats.'
+      },
+      {
+        id: 'hurdle_step',
+        name: 'Hurdle Step',
+        bilateral: true,
+        defaultL: 2,
+        defaultR: 2,
+        clearing: 'Pass',
+        restricted: 'Heavy Running/Sprinting on unstable pelvis, High Box Jumps, Uncontrolled Single-Leg Plyometrics.',
+        recommended: 'Hurdle Step Over Dowel, Cook Hip Lift, Heel-Elevated Glute Bridge, Assisted 1-Leg Glute Bridge with Band Kick, Landmine Assisted Single-Leg RDL.',
+        focus: 'Establish stance-leg hip stability and pelvic dissociation between hip flexion and hip extension.'
+      },
+      {
+        id: 'inline_lunge',
+        name: 'Inline Lunge',
+        bilateral: true,
+        defaultL: 2,
+        defaultR: 1,
+        clearing: 'Pass',
+        restricted: 'Heavy Walking Lunges, Plyometric Split Jumps, Deep Unassisted Deficit Lunges.',
+        recommended: 'Half-Kneeling Hip Flexor Stretch, Couch Stretch, Assisted Reverse Lunge, Landmine Split Squat, Half-Kneeling Pallof Press.',
+        focus: 'Restore trailing hip flexor/quad length and build deceleration control in a narrow split stance.'
+      },
+      {
+        id: 'shoulder_mobility',
+        name: 'Shoulder Mobility',
+        bilateral: true,
+        defaultL: 1,
+        defaultR: 2,
+        clearing: 'Pass',
+        restricted: 'Barbell Overhead Press, Behind-the-Neck Lat Pulldowns, Snatches, Heavy Overhead Carries, Dips.',
+        recommended: 'Band Shoulder Dislocators, Banded Overhead Lat Stretch, Floor Slide with Diaphragmatic Breathing, Kettlebell Arm Bar, Prone YTWL, Quadruped T-Spine Rotation, Half-Kneeling Landmine Press.',
+        focus: 'Restore thoracic extension, lat/pec length, and scapular upward rotation. Substitute vertical pressing with Landmine angles.'
+      },
+      {
+        id: 'aslr',
+        name: 'Active Straight-Leg Raise',
+        bilateral: true,
+        defaultL: 2,
+        defaultR: 2,
+        clearing: 'Pass',
+        restricted: 'Conventional Floor Deadlifts (from low pull), Heavy Good Mornings, Straight-Leg Toe Touches under load.',
+        recommended: 'Active Hamstring Stretch with Strap, Active Straight Leg Raise with Band Assist, Leg Lowering with Dowel, Elevated Trap Bar Deadlift, RDL.',
+        focus: 'Separate hip hinge mechanics from lumbar flexion; pair hamstring extensibility with anterior core bracing.'
+      },
+      {
+        id: 'trunk_pushup',
+        name: 'Trunk Stability Push-Up',
+        bilateral: false,
+        defaultL: 2,
+        defaultR: 2,
+        clearing: 'Pass',
+        restricted: 'Floor Push-Ups with lumbar sag, Heavy Barbell Bench Press without brace, Ab Wheel Rollouts.',
+        recommended: 'Crocodile Breathing, Incline Push-Up, High Plank Shoulder Tap, RKC Front Plank.',
+        focus: 'Build reflexive anterior core anti-extension stiffness so shoulders and hips move as a single unit.'
+      },
+      {
+        id: 'rotary_stability',
+        name: 'Rotary Stability',
+        bilateral: true,
+        defaultL: 2,
+        defaultR: 2,
+        clearing: 'Pass',
+        restricted: 'Heavy Rotational Medicine Ball Slams, Single-Arm Overhead Snatches, Uncontrolled Twisting Crunches.',
+        recommended: 'Hard Rolling, Bird Dog, Bear Crawl Hold, Half-Kneeling Pallof Press, Suitcase Carry.',
+        focus: 'Develop multi-planar pelvic and trunk control across diagonal contralateral chains.'
+      }
+    ];
+
+    // -----------------------------------------------------------------------
+    // 3. DEFAULT RPE REFERENCE & 1RM LIFTS (EXACT MATCH TO UPLOADED CSV)
+    // -----------------------------------------------------------------------
+    const RPE_REFERENCE_DATA = [
+      { rpe: '10', rir: '0 RIR', desc: 'Maximum effort; could not perform another rep or add weight.', color: 'bg-rose-100 text-rose-800' },
+      { rpe: '9.5', rir: '0–1 RIR', desc: 'Could possibly do 1 more rep, definitely could add slightly more weight.', color: 'bg-rose-50 text-rose-700' },
+      { rpe: '9', rir: '1 RIR', desc: 'Could definitely perform 1 more clean repetition.', color: 'bg-amber-100 text-amber-800' },
+      { rpe: '8.5', rir: '1–2 RIR', desc: 'Could definitely do 1 more rep, maybe 2.', color: 'bg-amber-50 text-amber-800' },
+      { rpe: '8', rir: '2 RIR', desc: 'Sweet spot for strength hypertrophy; 2 solid reps left in tank.', color: 'bg-emerald-100 text-emerald-800' },
+      { rpe: '7.5', rir: '2–3 RIR', desc: 'Bar speed stays crisp; 2 to 3 reps remaining.', color: 'bg-emerald-50 text-emerald-700' },
+      { rpe: '7', rir: '3 RIR', desc: 'Moderate effort / power work; 3 reps left in reserve.', color: 'bg-teal-50 text-teal-700' },
+      { rpe: '6.5', rir: '4–5 RIR', desc: 'Light-to-moderate warm-up or technical groove work.', color: 'bg-slate-100 text-slate-700' }
+    ];
+
+    const DEFAULT_MAIN_LIFTS = [
+      { id: 'lift-1', name: 'Squat', weight: 115, reps: 5 },
+      { id: 'lift-2', name: 'Bench', weight: 155, reps: 1 },
+      { id: 'lift-3', name: 'Deadlift', weight: 225, reps: 3 }
+    ];
+
+    // -----------------------------------------------------------------------
+    // 4. DEFAULT 4-WEEK PROGRAM DATA (SMART CORRECTIVE -> STRENGTH FLOW)
+    // -----------------------------------------------------------------------
+    function buildDefaultProgram() {
+      const baseDaysW1 = [
+        {
+          id: 'w1-d1',
+          dayLabel: 'Day 1 — Lower Body Squat & Anti-Rotation',
+          date: '2026-11-23',
+          warmups: [
+            { id: 'wu-1', name: 'Ankle Band Distraction Mobilization', prescription: '2 × 10/side' },
+            { id: 'wu-2', name: 'Deep Squat Hold with T-Spine Rotation', prescription: '2 × 5/side' },
+            { id: 'wu-3', name: 'Cook Hip Lift', prescription: '2 × 8/side' }
+          ],
+          exercises: [
+            { id: 'e-101', name: 'Goblet Squat', sets: 3, reps: 10, weight: 45, rpe: 7.5, notes: '3-sec eccentric, heels on 5lb plates if needed', completed: true },
+            { id: 'e-102', name: 'Landmine Split Squat', sets: 3, reps: 8, weight: 50, rpe: 8, notes: 'Each leg; keep ribs stacked over pelvis', completed: true },
+            { id: 'e-103', name: 'Single-Arm Dumbbell Row', sets: 3, reps: 10, weight: 35, rpe: 8, notes: 'Pause 1s at top, keep shoulder packed', completed: false },
+            { id: 'e-104', name: 'Half-Kneeling Pallof Press', sets: 3, reps: 10, weight: 20, rpe: 7.5, notes: '2-sec isometric hold at full extension', completed: false }
+          ]
+        },
+        {
+          id: 'w1-d2',
+          dayLabel: 'Day 2 — Upper Push/Pull & T-Spine Mobility',
+          date: '2026-11-25',
+          warmups: [
+            { id: 'wu-4', name: 'Band Shoulder Dislocators', prescription: '2 × 12' },
+            { id: 'wu-5', name: 'Quadruped T-Spine Rotation', prescription: '2 × 8/side' },
+            { id: 'wu-6', name: 'Prone YTWL', prescription: '2 × 6 each' }
+          ],
+          exercises: [
+            { id: 'e-201', name: 'Half-Kneeling Landmine Press', sets: 3, reps: 8, weight: 45, rpe: 8, notes: 'FMS Shoulder 1 safe alternative to overhead press', completed: false },
+            { id: 'e-202', name: 'Incline Push-Up', sets: 3, reps: 12, weight: 0, rpe: 7.5, notes: 'Hands on 24" box; maintain rigid plank', completed: false },
+            { id: 'e-203', name: 'Half-Kneeling Cable Pulldown', sets: 3, reps: 10, weight: 70, rpe: 8, notes: 'Drive elbows to hip pockets', completed: false },
+            { id: 'e-204', name: 'Bird Dog', sets: 3, reps: 8, weight: 0, rpe: 7, notes: '3-sec hold per rep; zero lumbar sway', completed: false }
+          ]
+        },
+        {
+          id: 'w1-d3',
+          dayLabel: 'Day 3 — Posterior Chain Hinge & Carry',
+          date: '2026-11-27',
+          warmups: [
+            { id: 'wu-7', name: 'Active Hamstring Stretch with Strap', prescription: '2 × 30s/side' },
+            { id: 'wu-8', name: 'Half-Kneeling Hip Flexor Stretch', prescription: '2 × 30s/side' },
+            { id: 'wu-9', name: 'Bear Crawl Hold', prescription: '2 × 25s' }
+          ],
+          exercises: [
+            { id: 'e-301', name: 'Trap Bar Deadlift', sets: 4, reps: 6, weight: 155, rpe: 8, notes: 'High handles; reset brace between each rep', completed: false },
+            { id: 'e-302', name: 'Romanian Deadlift (RDL)', sets: 3, reps: 8, weight: 95, rpe: 7.5, notes: 'Push hips back until hamstring end-range', completed: false },
+            { id: 'e-303', name: 'Heel-Elevated Glute Bridge', sets: 3, reps: 12, weight: 25, rpe: 8, notes: 'Posterior pelvic tilt at top', completed: false },
+            { id: 'e-304', name: 'Suitcase Carry', sets: 3, reps: 30, weight: 40, rpe: 7.5, notes: '30 yards each hand; stay completely vertical', completed: false }
+          ]
+        }
+      ];
+
+      // Clone and progress slightly across Weeks 2, 3, and 4
+      const weeks = { 1: baseDaysW1 };
+      [2, 3, 4].forEach((wk) => {
+        const dayOffset = (wk - 1) * 7;
+        const loadBump = (wk - 1) * 5;
+        weeks[wk] = baseDaysW1.map((day, dIdx) => {
+          const baseDate = new Date(day.date + 'T12:00:00');
+          baseDate.setDate(baseDate.getDate() + dayOffset);
+          const isoDate = baseDate.toISOString().split('T')[0];
+
+          return {
+            id: `w${wk}-d${dIdx + 1}`,
+            dayLabel: day.dayLabel,
+            date: isoDate,
+            warmups: day.warmups.map((w, wIdx) => ({ ...w, id: `w${wk}-wu-${dIdx}-${wIdx}` })),
+            exercises: day.exercises.map((ex, eIdx) => ({
+              ...ex,
+              id: `w${wk}-e-${dIdx}-${eIdx}`,
+              weight: ex.weight > 0 ? ex.weight + loadBump : 0,
+              rpe: wk === 4 ? Math.max(6.5, ex.rpe - 1) : Math.min(9, ex.rpe + (wk - 1) * 0.5),
+              notes: wk === 4 ? 'Deload / Consolidation Week — crisp bar speed' : ex.notes,
+              completed: false
+            }))
+          };
+        });
+      });
+
+      return weeks;
+    }
+
+    // -----------------------------------------------------------------------
+    // 5. APPLICATION STATE & LOCALSTORAGE PERSISTENCE
+    // -----------------------------------------------------------------------
+    const STORAGE_KEY = 'fms_coach_client_portal_v1';
+
+    let appState = {
+      mode: 'client', // 'client' | 'coach'
+      activeTab: 'tracker',
+      selectedWeek: 1, // 1, 2, 3, 4, or 'all'
+      clientMeta: {
+        name: 'Alex Mercer',
+        phase: 'Block 1: Corrective Foundation & Strength Base',
+        notes: 'Prioritize Shoulder Mobility & Ankle Dorsiflexion drills in warm-up before main lower/upper lifts. Leave 2 reps in reserve (RPE 8) on primary compound sets.'
+      },
+      programWeeks: buildDefaultProgram(),
+      fmsScores: FMS_PATTERN_DEFINITIONS.map((p) => ({
+        id: p.id,
+        name: p.name,
+        bilateral: p.bilateral,
+        left: p.defaultL,
+        right: p.defaultR,
+        clearing: p.clearing
+      })),
+      fmsComments: 'Left shoulder internal rotation & right inline lunge deficit noted during screen; keep overhead barbell/DB pressing restricted until Shoulder Mobility reaches >= 2. Re-test in 4 weeks.',
+      exerciseLibrary: [...DEFAULT_EXERCISE_LIBRARY],
+      exerciseVideos: {}, // { exerciseName: url }
+      mainLifts: [...DEFAULT_MAIN_LIFTS]
+    };
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          appState = { ...appState, ...parsed };
+        }
+      } catch (err) {
+        console.warn('Could not load saved state:', err);
+      }
+    }
+
+    function saveState() {
+      try {
+        const commentsEl = document.getElementById('fms-trainer-comments');
+        if (commentsEl) appState.fmsComments = commentsEl.value;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (err) {
+        console.warn('Could not save state:', err);
+      }
+    }
+
+    function resetToDefaultTemplate() {
+      localStorage.removeItem(STORAGE_KEY);
+      appState = {
+        mode: 'client',
+        activeTab: 'tracker',
+        selectedWeek: 1,
+        clientMeta: {
+          name: 'Alex Mercer',
+          phase: 'Block 1: Corrective Foundation & Strength Base',
+          notes: 'Prioritize Shoulder Mobility & Ankle Dorsiflexion drills in warm-up before main lower/upper lifts. Leave 2 reps in reserve (RPE 8) on primary compound sets.'
+        },
+        programWeeks: buildDefaultProgram(),
+        fmsScores: FMS_PATTERN_DEFINITIONS.map((p) => ({
+          id: p.id,
+          name: p.name,
+          bilateral: p.bilateral,
+          left: p.defaultL,
+          right: p.defaultR,
+          clearing: p.clearing
+        })),
+        fmsComments: 'Left shoulder internal rotation & right inline lunge deficit noted during screen; keep overhead barbell/DB pressing restricted until Shoulder Mobility reaches >= 2. Re-test in 4 weeks.',
+        exerciseLibrary: [...DEFAULT_EXERCISE_LIBRARY],
+        exerciseVideos: {},
+        mainLifts: [...DEFAULT_MAIN_LIFTS]
+      };
+      saveState();
+      closeModal('modal-data-io');
+      initUI();
+      showToast('Template reset to default FMS & 4-Week program.', 'success');
+    }
+
+    // -----------------------------------------------------------------------
+    // 6. TOAST NOTIFICATIONS (NO ALERT/CONFIRM)
+    // -----------------------------------------------------------------------
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-slate-900 text-white border-l-4 border-emerald-400',
+        warning: 'bg-slate-900 text-white border-l-4 border-amber-400',
+        error: 'bg-slate-900 text-white border-l-4 border-rose-500',
+        info: 'bg-slate-900 text-white border-l-4 border-teal-400'
+      };
+      toast.className = `${colors[type] || colors.info} px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center justify-between gap-3 pointer-events-auto transition-all`;
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+      }, 3800);
+    }
+
+    // -----------------------------------------------------------------------
+    // 7. NAVIGATION & MODE SWITCHING
+    // -----------------------------------------------------------------------
+    function switchTab(tabId) {
+      appState.activeTab = tabId;
+      document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.add('hidden'));
+      document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+
+      document.querySelectorAll('.tab-nav-btn').forEach((btn) => {
+        btn.classList.remove('border-emerald-400', 'text-emerald-400');
+        btn.classList.add('border-transparent', 'text-slate-400');
+      });
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      activeBtn.classList.remove('border-transparent', 'text-slate-400');
+      activeBtn.classList.add('border-emerald-400', 'text-emerald-400');
+
+      if (tabId === 'tracker') renderProgramTracker();
+      if (tabId === 'fms') renderFMSTab();
+      if (tabId === 'library') renderExerciseLibrary();
+      if (tabId === 'calculator') renderCalculatorTab();
+      saveState();
+    }
+
+    function setAppMode(mode) {
+      appState.mode = mode;
+      const clientBtn = document.getElementById('btn-mode-client');
+      const coachBtn = document.getElementById('btn-mode-coach');
+      const indicatorPill = document.getElementById('mode-indicator-pill');
+
+      if (mode === 'coach') {
+        coachBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-emerald-500 text-slate-950 shadow';
+        clientBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-slate-300 hover:text-white';
+        indicatorPill.textContent = 'Coach Edit Mode';
+        indicatorPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
+      } else {
+        clientBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-emerald-500 text-slate-950 shadow';
+        coachBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-slate-300 hover:text-white';
+        indicatorPill.textContent = 'Client View Mode';
+        indicatorPill.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-200 text-slate-700';
+      }
+
+      applyModeVisibility();
+      renderProgramTracker();
+      saveState();
+    }
+
+    function applyModeVisibility() {
+      const isCoach = appState.mode === 'coach';
+      document.querySelectorAll('.coach-only-btn').forEach((el) => {
+        el.style.display = isCoach ? '' : 'none';
+      });
+      document.querySelectorAll('.coach-editable').forEach((el) => {
+        el.readOnly = !isCoach;
+        if (isCoach) {
+          el.classList.add('border-slate-300', 'bg-slate-50/70');
+        } else {
+          el.classList.remove('border-slate-300', 'bg-slate-50/70');
+        }
+      });
+    }
+
+    function updateClientMeta() {
+      const nameVal = document.getElementById('client-name-input').value.trim() || 'Client';
+      const phaseVal = document.getElementById('client-phase-input').value.trim();
+      const notesVal = document.getElementById('coach-notes-input').value;
+      appState.clientMeta = { name: nameVal, phase: phaseVal, notes: notesVal };
+
+      const initials = nameVal
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+      document.getElementById('client-initials').textContent = initials || 'CL';
+      saveState();
+    }
+
+    // -----------------------------------------------------------------------
+    // 8. TAB 1: 4-WEEK PROGRAM TRACKER LOGIC
+    // -----------------------------------------------------------------------
+    function selectWeek(wk) {
+      appState.selectedWeek = wk;
+      document.querySelectorAll('.week-pill').forEach((pill) => {
+        pill.className = 'week-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition text-slate-600 hover:bg-slate-100';
+      });
+      const activePill = document.getElementById(`week-pill-${wk}`);
+      if (activePill) {
+        activePill.className = 'week-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition bg-slate-900 text-white shadow';
+      }
+      renderProgramTracker();
+      saveState();
+    }
+
+    function getRpeBadgeInfo(rpeVal) {
+      const rpe = parseFloat(rpeVal) || 0;
+      if (rpe >= 9.5) return { bg: 'bg-rose-100 text-rose-800 border-rose-200', rir: '0-1 RIR (Max Effort)' };
+      if (rpe >= 8.5) return { bg: 'bg-amber-100 text-amber-800 border-amber-200', rir: '1-2 RIR (Hard)' };
+      if (rpe >= 7.5) return { bg: 'bg-emerald-100 text-emerald-800 border-emerald-200', rir: '2-3 RIR (Target Strength)' };
+      return { bg: 'bg-teal-50 text-teal-700 border-teal-200', rir: '3-5 RIR (Moderate / Tech)' };
+    }
+
+    function renderProgramTracker() {
+      const container = document.getElementById('workout-days-container');
+      const isCoach = appState.mode === 'coach';
+      const weeksToRender = appState.selectedWeek === 'all' ? [1, 2, 3, 4] : [appState.selectedWeek];
+
+      let totalExercises = 0;
+      let completedExercises = 0;
+      let totalSets = 0;
+      let totalVolume = 0;
+      let rpeSum = 0;
+      let rpeCount = 0;
+
+      let html = '';
+
+      weeksToRender.forEach((wk) => {
+        const days = appState.programWeeks[wk] || [];
+
+        if (appState.selectedWeek === 'all') {
+          html += `
+            <div class="flex items-center gap-3 pt-2">
+              <span class="px-3 py-1 rounded-lg bg-slate-900 text-emerald-400 text-xs font-extrabold uppercase tracking-wider">Week ${wk}</span>
+              <div class="h-px bg-slate-300 flex-1"></div>
+            </div>
+          `;
+        }
+
+        if (days.length === 0) {
+          html += `
+            <div class="bg-white rounded-2xl p-8 text-center border border-dashed border-slate-300">
+              <p class="text-sm text-slate-500 font-medium">No workout sessions scheduled for Week ${wk} yet.</p>
+              <button onclick="addWorkoutDay(${wk})" class="mt-3 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">+ Add Workout Day</button>
+            </div>
+          `;
+        }
+
+        days.forEach((day, dIdx) => {
+          // Calculate KPIs
+          day.exercises.forEach((ex) => {
+            totalExercises++;
+            if (ex.completed) completedExercises++;
+            const s = parseFloat(ex.sets) || 0;
+            const r = parseFloat(ex.reps) || 0;
+            const w = parseFloat(ex.weight) || 0;
+            const rpe = parseFloat(ex.rpe) || 0;
+
+            totalSets += s;
+            totalVolume += s * r * w;
+            if (rpe > 0) {
+              rpeSum += rpe;
+              rpeCount++;
+            }
+          });
+
+          const dayCompletedCount = day.exercises.filter((e) => e.completed).length;
+
+          html += `
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-card">
+              <!-- Session Header -->
+              <div class="bg-slate-900 text-white px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3 flex-1">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 font-extrabold text-sm flex items-center justify-center shrink-0">
+                    D${dIdx + 1}
+                  </div>
+                  <div class="flex-1">
+                    ${isCoach
+                      ? `<input type="text" value="${escapeHtml(day.dayLabel)}" onchange="updateDayField(${wk}, '${day.id}', 'dayLabel', this.value)" class="bg-slate-800 text-white font-bold text-sm sm:text-base px-2.5 py-1 rounded-lg border border-slate-700 w-full sm:w-96 focus:outline-none focus:border-emerald-400" />`
+                      : `<h3 class="font-bold text-sm sm:text-base">${escapeHtml(day.dayLabel)}</h3>`
+                    }
+                    <div class="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                      <span class="flex items-center gap-1.5">
+                        <i class="fa-regular fa-calendar text-emerald-400"></i>
+                        ${isCoach
+                          ? `<input type="date" value="${day.date}" onchange="updateDayField(${wk}, '${day.id}', 'date', this.value)" class="bg-slate-800 text-slate-200 px-2 py-0.5 rounded border border-slate-700 text-xs" />`
+                          : `<span>${day.date}</span>`
+                        }
+                      </span>
+                      <span>•</span>
+                      <span class="text-emerald-400 font-semibold">${dayCompletedCount}/${day.exercises.length} Completed</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 no-print">
+                  <button onclick="openAddToProgramModal('', ${wk}, '${day.id}', 'workout')" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Add Exercise
+                  </button>
+                  ${isCoach ? `
+                    <button onclick="removeWorkoutDay(${wk}, '${day.id}')" class="p-2 rounded-xl bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white text-xs transition" title="Delete Session">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+
+              <!-- Warm-Up / Mobility Block -->
+              <div class="bg-amber-50/70 border-b border-amber-200/70 px-4 sm:px-6 py-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-fire-flame-curved text-amber-600"></i>
+                    Warm-Up & FMS Mobility Prep
+                  </span>
+                  <button onclick="openAddToProgramModal('', ${wk}, '${day.id}', 'warmup')" class="no-print text-[11px] font-bold text-amber-800 hover:text-amber-950 bg-amber-200/70 hover:bg-amber-200 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Add Mobility Drill
+                  </button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  ${day.warmups.length === 0
+                    ? `<span class="text-xs text-slate-400 italic">No warm-up drills added.</span>`
+                    : day.warmups.map((wu) => `
+                        <div class="inline-flex items-center gap-2 bg-white border border-amber-200 rounded-xl px-3 py-1.5 text-xs shadow-2xs">
+                          <button onclick="openExerciseDetailByName('${escapeJs(wu.name)}')" class="font-semibold text-slate-800 hover:text-teal-700 text-left flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-amber-500 text-[11px]"></i>
+                            <span>${escapeHtml(wu.name)}</span>
+                          </button>
+                          <span class="text-[11px] font-bold text-amber-700 bg-amber-100/80 px-1.5 py-0.5 rounded">${escapeHtml(wu.prescription)}</span>
+                          ${isCoach ? `
+                            <button onclick="removeWarmupDrill(${wk}, '${day.id}', '${wu.id}')" class="text-slate-400 hover:text-rose-600 ml-0.5 no-print">
+                              <i class="fa-solid fa-xmark"></i>
+                            </button>
+                          ` : ''}
+                        </div>
+                      `).join('')
+                  }
+                </div>
+              </div>
+
+              <!-- Exercises Table (Desktop) & Stacked Cards (Mobile) -->
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                      <th class="py-3 px-4 w-12 text-center">Done</th>
+                      <th class="py-3 px-3">Exercise (Click for Cues)</th>
+                      <th class="py-3 px-2 text-center w-20">Sets</th>
+                      <th class="py-3 px-2 text-center w-20">Reps</th>
+                      <th class="py-3 px-2 text-center w-24">Weight (lbs)</th>
+                      <th class="py-3 px-2 text-center w-24">RPE / RIR</th>
+                      <th class="py-3 px-3">Notes / Tempo</th>
+                      ${isCoach ? `<th class="py-3 px-3 text-center w-14 no-print">Del</th>` : ''}
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                    ${day.exercises.map((ex) => {
+                      const rpeInfo = getRpeBadgeInfo(ex.rpe);
+                      const rowBg = ex.completed ? 'bg-emerald-50/40' : 'hover:bg-slate-50/80';
+                      return `
+                        <tr class="${rowBg} transition">
+                          <!-- Completion Toggle -->
+                          <td class="py-3 px-4 text-center">
+                            <button onclick="toggleExerciseComplete(${wk}, '${day.id}', '${ex.id}')" class="w-6 h-6 rounded-lg border-2 flex items-center justify-center mx-auto transition ${ex.completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-emerald-500 text-transparent'}">
+                              <i class="fa-solid fa-check text-xs"></i>
+                            </button>
+                          </td>
+
+                          <!-- Exercise Name (Clickable to view cues) -->
+                          <td class="py-3 px-3">
+                            <div class="flex items-center gap-2">
+                              <button onclick="openExerciseDetailByName('${escapeJs(ex.name)}')" class="font-bold text-left ${ex.completed ? 'line-through text-slate-400' : 'text-slate-900 hover:text-teal-700'} transition flex items-center gap-1.5">
+                                <span>${escapeHtml(ex.name)}</span>
+                                <i class="fa-solid fa-circle-play text-emerald-600 text-xs shrink-0" title="View Coaching Cues & Demo"></i>
+                              </button>
+                            </div>
+                          </td>
+
+                          <!-- Sets -->
+                          <td class="py-2.5 px-2 text-center">
+                            <input type="number" min="1" value="${ex.sets}" onchange="updateExerciseField(${wk}, '${day.id}', '${ex.id}', 'sets', this.value)" class="w-14 text-center font-semibold bg-slate-50 border border-slate-200 rounded-lg py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                          </td>
+
+                          <!-- Reps -->
+                          <td class="py-2.5 px-2 text-center">
+                            <input type="text" value="${escapeHtml(String(ex.reps))}" onchange="updateExerciseField(${wk}, '${day.id}', '${ex.id}', 'reps', this.value)" class="w-14 text-center font-semibold bg-slate-50 border border-slate-200 rounded-lg py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                          </td>
+
+                          <!-- Weight (lbs) -->
+                          <td class="py-2.5 px-2 text-center">
+                            <input type="number" min="0" step="2.5" value="${ex.weight}" onchange="updateExerciseField(${wk}, '${day.id}', '${ex.id}', 'weight', this.value)" class="w-20 text-center font-bold text-slate-900 bg-slate-50 border border-slate-200 rounded-lg py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                          </td>
+
+                          <!-- RPE with Intensity Badge & RIR Tooltip -->
+                          <td class="py-2.5 px-2 text-center">
+                            <div class="inline-flex flex-col items-center group relative">
+                              <input type="number" step="0.5" min="5" max="10" value="${ex.rpe}" onchange="updateExerciseField(${wk}, '${day.id}', '${ex.id}', 'rpe', this.value)" class="w-16 text-center font-bold border rounded-lg py-1 text-xs ${rpeInfo.bg} focus:outline-none focus:ring-2 focus:ring-emerald-500" title="${rpeInfo.rir}" />
+                              <span class="text-[10px] font-medium text-slate-400 mt-0.5">${rpeInfo.rir.split(' ')[0]} RIR</span>
+                            </div>
+                          </td>
+
+                          <!-- Notes -->
+                          <td class="py-2.5 px-3">
+                            <input type="text" value="${escapeHtml(ex.notes || '')}" onchange="updateExerciseField(${wk}, '${day.id}', '${ex.id}', 'notes', this.value)" placeholder="Add note..." class="w-full min-w-[160px] text-xs text-slate-600 bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent focus:border-slate-200 rounded-lg px-2 py-1 focus:outline-none" />
+                          </td>
+
+                          ${isCoach ? `
+                            <td class="py-2.5 px-3 text-center no-print">
+                              <button onclick="removeExerciseFromDay(${wk}, '${day.id}', '${ex.id}')" class="text-slate-400 hover:text-rose-600 p-1 transition" title="Remove Exercise">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                              </button>
+                            </td>
+                          ` : ''}
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        });
+      });
+
+      container.innerHTML = html;
+
+      // Update KPI Cards
+      document.getElementById('kpi-exercises').textContent = totalExercises;
+      document.getElementById('kpi-completed-sub').textContent = `${completedExercises} of ${totalExercises} completed`;
+      document.getElementById('kpi-sets').textContent = totalSets;
+      document.getElementById('kpi-volume').innerHTML = `${totalVolume.toLocaleString()} <span class="text-sm font-semibold text-slate-400">lbs</span>`;
+      const avgRpe = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : '0.0';
+      document.getElementById('kpi-rpe').textContent = avgRpe;
+    }
+
+    function toggleExerciseComplete(week, dayId, exId) {
+      const day = appState.programWeeks[week].find((d) => d.id === dayId);
+      if (!day) return;
+      const ex = day.exercises.find((e) => e.id === exId);
+      if (!ex) return;
+      ex.completed = !ex.completed;
+      saveState();
+      renderProgramTracker();
+    }
+
+    function updateExerciseField(week, dayId, exId, field, value) {
+      const day = appState.programWeeks[week].find((d) => d.id === dayId);
+      if (!day) return;
+      const ex = day.exercises.find((e) => e.id === exId);
+      if (!ex) return;
+      if (field === 'sets' || field === 'weight' || field === 'rpe') {
+        ex[field] = parseFloat(value) || 0;
+      } else {
+        ex[field] = value;
+      }
+      saveState();
+      renderProgramTracker();
+    }
+
+    function updateDayField(week, dayId, field, value) {
+      const day = appState.programWeeks[week].find((d) => d.id === dayId);
+      if (!day) return;
+      day[field] = value;
+      saveState();
+    }
+
+    function addWorkoutDay(targetWeek = null) {
+      const wk = targetWeek || (appState.selectedWeek === 'all' ? 1 : appState.selectedWeek);
+      const existingDays = appState.programWeeks[wk] || [];
+      const newNum = existingDays.length + 1;
+      const todayIso = new Date().toISOString().split('T')[0];
+
+      existingDays.push({
+        id: `w${wk}-d${Date.now()}`,
+        dayLabel: `Day ${newNum} — Full Body / Corrective Session`,
+        date: todayIso,
+        warmups: [
+          { id: `wu-${Date.now()}`, name: 'Crocodile Breathing', prescription: '2 × 5 breaths' }
+        ],
+        exercises: [
+          { id: `ex-${Date.now()}`, name: 'Goblet Squat', sets: 3, reps: 10, weight: 35, rpe: 7.5, notes: 'Controlled tempo', completed: false }
+        ]
+      });
+      appState.programWeeks[wk] = existingDays;
+      saveState();
+      renderProgramTracker();
+      showToast(`Added Day ${newNum} to Week ${wk}.`, 'success');
+    }
+
+    function removeWorkoutDay(week, dayId) {
+      appState.programWeeks[week] = appState.programWeeks[week].filter((d) => d.id !== dayId);
+      saveState();
+      renderProgramTracker();
+      showToast('Workout session removed.', 'info');
+    }
+
+    function removeExerciseFromDay(week, dayId, exId) {
+      const day = appState.programWeeks[week].find((d) => d.id === dayId);
+      if (!day) return;
+      day.exercises = day.exercises.filter((e) => e.id !== exId);
+      saveState();
+      renderProgramTracker();
+    }
+
+    function removeWarmupDrill(week, dayId, wuId) {
+      const day = appState.programWeeks[week].find((d) => d.id === dayId);
+      if (!day) return;
+      day.warmups = day.warmups.filter((w) => w.id !== wuId);
+      saveState();
+      renderProgramTracker();
+    }
+
+    // -----------------------------------------------------------------------
+    // 9. TAB 2: FMS ASSESSMENT & RECOMMENDATIONS LOGIC
+    // -----------------------------------------------------------------------
+    function computeFmsRowMetrics(scoreObj) {
+      if (scoreObj.clearing === 'Fail') {
+        return {
+          finalScore: 0,
+          asymmetry: scoreObj.bilateral && scoreObj.left !== scoreObj.right ? 'Asymmetrical' : 'Symmetrical'
+        };
+      }
+      const finalScore = scoreObj.bilateral ? Math.min(scoreObj.left, scoreObj.right) : scoreObj.left;
+      const asymmetry = scoreObj.bilateral && scoreObj.left !== scoreObj.right ? 'Asymmetrical' : 'Symmetrical';
+      return { finalScore, asymmetry };
+    }
+
+    function renderFMSTab() {
+      const tbody = document.getElementById('fms-scorecard-body');
+      const guardrailsContainer = document.getElementById('fms-guardrails-container');
+      document.getElementById('fms-trainer-comments').value = appState.fmsComments || '';
+
+      let count0 = 0;
+      let count12 = 0;
+      let count3 = 0;
+      let compositeScore = 0;
+
+      let rowsHtml = '';
+      let guardrailsHtml = '';
+
+      appState.fmsScores.forEach((s, idx) => {
+        const def = FMS_PATTERN_DEFINITIONS.find((d) => d.id === s.id);
+        const { finalScore, asymmetry } = computeFmsRowMetrics(s);
+        compositeScore += finalScore;
+
+        if (finalScore === 0) count0++;
+        else if (finalScore <= 2) count12++;
+        else count3++;
+
+        let statusBadge = '';
+        if (finalScore === 0) {
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800"><i class="fa-solid fa-circle-exclamation"></i> 0 = Pain / Medical Eval</span>`;
+        } else if (finalScore <= 2) {
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"><i class="fa-solid fa-wrench"></i> ${finalScore} = Modify & Mobilize</span>`;
+        } else {
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-circle-check"></i> 3 = Cleared for Full Load</span>`;
+        }
+
+        const asymBadge = asymmetry === 'Asymmetrical'
+          ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Asymmetrical</span>`
+          : `<span class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-600">Symmetrical</span>`;
+
+        rowsHtml += `
+          <tr class="hover:bg-slate-50/70 transition">
+            <td class="py-3.5 px-4 font-bold text-slate-900">${s.name}</td>
+            <td class="py-3 px-3 text-center">
+              <select onchange="updateFmsScore(${idx}, 'left', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 font-bold text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                ${[0, 1, 2, 3].map((v) => `<option value="${v}" ${s.left === v ? 'selected' : ''}>${v}</option>`).join('')}
+              </select>
+            </td>
+            <td class="py-3 px-3 text-center">
+              ${s.bilateral
+                ? `<select onchange="updateFmsScore(${idx}, 'right', this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 font-bold text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    ${[0, 1, 2, 3].map((v) => `<option value="${v}" ${s.right === v ? 'selected' : ''}>${v}</option>`).join('')}
+                  </select>`
+                : `<span class="text-xs text-slate-400 font-medium">—</span>`
+              }
+            </td>
+            <td class="py-3 px-3 text-center">
+              <select onchange="updateFmsScore(${idx}, 'clearing', this.value)" class="border rounded-lg px-2.5 py-1 font-bold text-xs focus:outline-none ${s.clearing === 'Fail' ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-slate-50 text-slate-700 border-slate-200'}">
+                <option value="Pass" ${s.clearing === 'Pass' ? 'selected' : ''}>Pass</option>
+                <option value="Fail" ${s.clearing === 'Fail' ? 'selected' : ''}>Fail (Pain)</option>
+              </select>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <span class="w-7 h-7 rounded-lg inline-flex items-center justify-center font-extrabold text-sm ${finalScore === 0 ? 'bg-rose-600 text-white' : finalScore <= 2 ? 'bg-amber-500 text-slate-950' : 'bg-emerald-500 text-slate-950'}">
+                ${finalScore}
+              </span>
+            </td>
+            <td class="py-3 px-3 text-center">${asymBadge}</td>
+            <td class="py-3 px-4">${statusBadge}</td>
+          </tr>
+        `;
+
+        // Build Dynamic Guardrail Card for patterns <= 2 (or all patterns with status styling)
+        const cardBorder = finalScore === 0
+          ? 'border-rose-300 bg-rose-50/40'
+          : finalScore <= 2
+            ? 'border-amber-300 bg-amber-50/30'
+            : 'border-emerald-200 bg-emerald-50/20';
+
+        guardrailsHtml += `
+          <div class="rounded-2xl border ${cardBorder} p-4 space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-slate-900">${s.name}</span>
+                ${asymmetry === 'Asymmetrical' ? `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-200 text-amber-900">L/R Asymmetry</span>` : ''}
+              </div>
+              <span class="text-xs font-extrabold px-2.5 py-0.5 rounded-full ${finalScore === 0 ? 'bg-rose-600 text-white' : finalScore <= 2 ? 'bg-amber-500 text-slate-950' : 'bg-emerald-500 text-slate-950'}">
+                Score: ${finalScore}
+              </span>
+            </div>
+
+            ${finalScore === 0 ? `
+              <div class="bg-rose-100 border border-rose-200 rounded-xl p-3 text-xs text-rose-900 font-semibold">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                PAIN FLAG: Suspend loaded movements in this pattern and refer for clinical/medical evaluation before progressing.
+              </div>
+            ` : finalScore <= 2 ? `
+              <div class="space-y-2 text-xs">
+                <div class="bg-white/90 rounded-xl p-2.5 border border-rose-200/70">
+                  <span class="font-bold text-rose-700 uppercase text-[10px] block mb-0.5">Restricted / Filtered Out Exercises:</span>
+                  <p class="text-slate-700">${def.restricted}</p>
+                </div>
+                <div class="bg-white/90 rounded-xl p-2.5 border border-emerald-200/80">
+                  <span class="font-bold text-emerald-700 uppercase text-[10px] block mb-0.5">Recommended Warm-Ups & Corrective Drills:</span>
+                  <p class="text-slate-700">${def.recommended}</p>
+                </div>
+                <p class="text-slate-600 italic"><strong class="text-slate-800 not-italic">Coaching Focus:</strong> ${def.focus}</p>
+              </div>
+            ` : `
+              <div class="text-xs text-emerald-800 bg-white/80 rounded-xl p-2.5 border border-emerald-200">
+                <i class="fa-solid fa-check-circle text-emerald-600 mr-1"></i>
+                <strong>Cleared for Full Load:</strong> No movement restrictions. Progress strength & power variations per mesocycle RPE targets.
+              </div>
+            `}
+          </div>
+        `;
+      });
+
+      tbody.innerHTML = rowsHtml;
+      guardrailsContainer.innerHTML = guardrailsHtml;
+
+      document.getElementById('fms-count-0').textContent = count0;
+      document.getElementById('fms-count-12').textContent = count12;
+      document.getElementById('fms-count-3').textContent = count3;
+      document.getElementById('fms-total-score').textContent = `${compositeScore} / 21`;
+
+      const headerBadge = document.getElementById('header-fms-summary-badge');
+      if (count0 > 0) {
+        headerBadge.textContent = `${count0} Pain Flag(s) • ${count12} Corrective`;
+        headerBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800';
+      } else if (count12 > 0) {
+        headerBadge.textContent = `${count12} Corrective Pattern(s) Active`;
+        headerBadge.className = 'text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800';
+      } else {
+        headerBadge.textContent = 'All 7 Patterns Cleared (Optimal)';
+        headerBadge.className = 'text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+      }
+    }
+
+    function updateFmsScore(index, field, value) {
+      if (field === 'left' || field === 'right') {
+        appState.fmsScores[index][field] = parseInt(value, 10);
+      } else {
+        appState.fmsScores[index][field] = value;
+      }
+      saveState();
+      renderFMSTab();
+    }
+
+    // -----------------------------------------------------------------------
+    // 10. TAB 3: EXERCISE LIBRARY LOGIC
+    // -----------------------------------------------------------------------
+    function populateLibraryCategories() {
+      const catSelect = document.getElementById('lib-filter-category');
+      const currentVal = catSelect.value;
+      const categories = [...new Set(appState.exerciseLibrary.map((e) => e.category).filter(Boolean))].sort();
+      catSelect.innerHTML = `<option value="ALL">All Categories</option>` +
+        categories.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+      if (categories.includes(currentVal)) catSelect.value = currentVal;
+      document.getElementById('library-count-badge').textContent = appState.exerciseLibrary.length;
+    }
+
+    function renderExerciseLibrary() {
+      populateLibraryCategories();
+      const searchQ = (document.getElementById('lib-search').value || '').toLowerCase().trim();
+      const patternF = document.getElementById('lib-filter-pattern').value;
+      const scoreF = document.getElementById('lib-filter-score').value;
+      const catF = document.getElementById('lib-filter-category').value;
+
+      const filtered = appState.exerciseLibrary.filter((ex) => {
+        const matchPattern = patternF === 'ALL' || ex.pattern === patternF;
+        const matchScore = scoreF === 'ALL' || ex.targetScore === scoreF;
+        const matchCat = catF === 'ALL' || ex.category === catF;
+        const matchSearch = !searchQ ||
+          ex.name.toLowerCase().includes(searchQ) ||
+          ex.cues.toLowerCase().includes(searchQ) ||
+          ex.pattern.toLowerCase().includes(searchQ) ||
+          ex.category.toLowerCase().includes(searchQ);
+        return matchPattern && matchScore && matchCat && matchSearch;
+      });
+
+      document.getElementById('lib-visible-count').textContent = filtered.length;
+      const grid = document.getElementById('exercise-library-grid');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl p-10 text-center border border-slate-200">
+            <p class="text-sm font-semibold text-slate-600">No exercises match your current filters.</p>
+            <button onclick="resetLibraryFilters()" class="mt-3 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">Reset Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((ex) => {
+        const isScore1 = ex.targetScore === 'Score 1';
+        const scoreBadgeClass = isScore1
+          ? 'bg-amber-100 text-amber-800 border-amber-200'
+          : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        const hasVideo = Boolean(appState.exerciseVideos[ex.name]);
+
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition p-4 sm:p-5 flex flex-col justify-between gap-4">
+            <div class="space-y-2.5">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-900 text-white">${escapeHtml(ex.pattern)}</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${scoreBadgeClass}">${escapeHtml(ex.targetScore)}</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-600">${escapeHtml(ex.category)}</span>
+              </div>
+
+              <h3 class="font-bold text-base text-slate-900 leading-snug">${escapeHtml(ex.name)}</h3>
+              <p class="text-xs text-slate-600 leading-relaxed line-clamp-3">${escapeHtml(ex.cues)}</p>
+            </div>
+
+            <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
+              <button onclick="openExerciseDetailById('${ex.id}')" class="flex-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-play ${hasVideo ? 'text-emerald-600' : 'text-slate-500'}"></i>
+                <span>Watch Demo</span>
+              </button>
+              <button onclick="openAddToProgramModal('${escapeJs(ex.name)}', ${appState.selectedWeek === 'all' ? 1 : appState.selectedWeek}, '', '${isScore1 ? 'warmup' : 'workout'}')" class="flex-1 px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add to Program</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function resetLibraryFilters() {
+      document.getElementById('lib-search').value = '';
+      document.getElementById('lib-filter-pattern').value = 'ALL';
+      document.getElementById('lib-filter-score').value = 'ALL';
+      document.getElementById('lib-filter-category').value = 'ALL';
+      renderExerciseLibrary();
+    }
+
+    // -----------------------------------------------------------------------
+    // 11. TAB 4: 1RM & RPE REFERENCE CALCULATOR LOGIC
+    // -----------------------------------------------------------------------
+    function renderCalculatorTab() {
+      // 1. RPE Reference Chart
+      const rpeBody = document.getElementById('rpe-reference-body');
+      rpeBody.innerHTML = RPE_REFERENCE_DATA.map((row) => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-4">
+            <span class="px-2.5 py-1 rounded-lg font-extrabold text-xs ${row.color}">${row.rpe}</span>
+          </td>
+          <td class="py-2.5 px-3 font-bold text-slate-800 whitespace-nowrap">${row.rir}</td>
+          <td class="py-2.5 px-4 text-slate-600">${row.desc}</td>
+        </tr>
+      `).join('');
+
+      // 2. Main Lifts 1RM Estimator (Epley: Weight * (1 + Reps/30))
+      const liftsBody = document.getElementById('lifts-1rm-body');
+      liftsBody.innerHTML = appState.mainLifts.map((lift, idx) => {
+        const est1RM = lift.weight * (1 + lift.reps / 30);
+        return `
+          <tr class="hover:bg-slate-50/70">
+            <td class="py-3 px-4">
+              <input type="text" value="${escapeHtml(lift.name)}" onchange="updateMainLift(${idx}, 'name', this.value)" class="font-bold text-slate-900 bg-transparent border-b border-transparent focus:border-emerald-500 focus:outline-none w-32" />
+            </td>
+            <td class="py-3 px-3 text-center">
+              <input type="number" min="0" step="2.5" value="${lift.weight}" onchange="updateMainLift(${idx}, 'weight', this.value)" class="w-20 text-center font-semibold bg-slate-50 border border-slate-200 rounded-lg py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            </td>
+            <td class="py-3 px-3 text-center">
+              <input type="number" min="1" max="30" value="${lift.reps}" onchange="updateMainLift(${idx}, 'reps', this.value)" class="w-16 text-center font-semibold bg-slate-50 border border-slate-200 rounded-lg py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            </td>
+            <td class="py-3 px-4 text-right font-extrabold text-emerald-700 text-base">
+              ${est1RM.toFixed(1)} <span class="text-xs font-medium text-slate-400">lbs</span>
+            </td>
+            <td class="py-3 px-3 text-center">
+              ${appState.mainLifts.length > 1 ? `
+                <button onclick="removeMainLift(${idx})" class="text-slate-400 hover:text-rose-600 p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
+              ` : '—'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // 3. Percentage Table (95% down to 50% in 5% increments)
+      const pctHead = document.getElementById('percentage-table-head');
+      const pctBody = document.getElementById('percentage-table-body');
+
+      pctHead.innerHTML = `
+        <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+          <th class="py-2.5 px-4">% of 1RM</th>
+          ${appState.mainLifts.map((l) => `<th class="py-2.5 px-4 text-right">${escapeHtml(l.name)} (lbs)</th>`).join('')}
+        </tr>
+      `;
+
+      const percentages = [95, 90, 85, 80, 75, 70, 65, 60, 55, 50];
+      pctBody.innerHTML = percentages.map((pct) => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-4 font-bold text-slate-800">${pct}%</td>
+          ${appState.mainLifts.map((l) => {
+            const est1RM = l.weight * (1 + l.reps / 30);
+            const load = (est1RM * (pct / 100)).toFixed(1);
+            return `<td class="py-2.5 px-4 text-right font-semibold text-slate-700">${load}</td>`;
+          }).join('')}
+        </tr>
+      `).join('');
+    }
+
+    function updateMainLift(index, field, value) {
+      if (field === 'name') {
+        appState.mainLifts[index].name = value;
+      } else {
+        appState.mainLifts[index][field] = parseFloat(value) || 0;
+      }
+      saveState();
+      renderCalculatorTab();
+    }
+
+    function addCustomLift() {
+      appState.mainLifts.push({
+        id: `lift-${Date.now()}`,
+        name: 'Overhead / Landmine',
+        weight: 95,
+        reps: 5
+      });
+      saveState();
+      renderCalculatorTab();
+      showToast('Added new lift to 1RM calculator.', 'success');
+    }
+
+    function removeMainLift(index) {
+      appState.mainLifts.splice(index, 1);
+      saveState();
+      renderCalculatorTab();
+    }
+
+    // -----------------------------------------------------------------------
+    // 12. MODALS: EXERCISE DETAIL & ADD TO PROGRAM
+    // -----------------------------------------------------------------------
+    let currentModalExerciseName = '';
+
+    function openExerciseDetailById(exId) {
+      const ex = appState.exerciseLibrary.find((e) => e.id === exId);
+      if (ex) showExerciseDetailModal(ex);
+    }
+
+    function openExerciseDetailByName(exName) {
+      const ex = appState.exerciseLibrary.find((e) => e.name.toLowerCase() === exName.toLowerCase());
+      if (ex) {
+        showExerciseDetailModal(ex);
+      } else {
+        showExerciseDetailModal({
+          name: exName,
+          pattern: 'Custom / Programmed Movement',
+          targetScore: 'Score 2 & 3',
+          category: 'Strength / Conditioning',
+          cues: 'Maintain neutral spine, braced core, and controlled eccentric tempo according to prescribed RPE.'
+        });
+      }
+    }
+
+    function showExerciseDetailModal(ex) {
+      currentModalExerciseName = ex.name;
+      document.getElementById('modal-ex-title').textContent = ex.name;
+      document.getElementById('modal-ex-cues').textContent = ex.cues;
+
+      const isScore1 = ex.targetScore === 'Score 1';
+      document.getElementById('modal-ex-badges').innerHTML = `
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-900 text-white">${escapeHtml(ex.pattern)}</span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${isScore1 ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${escapeHtml(ex.targetScore)}</span>
+        <span class="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-600">${escapeHtml(ex.category)}</span>
+      `;
+
+      const savedUrl = appState.exerciseVideos[ex.name] || '';
+      document.getElementById('modal-ex-video-input').value = savedUrl;
+      renderVideoPreviewLink(savedUrl);
+
+      document.getElementById('modal-ex-add-btn').onclick = () => {
+        closeModal('modal-exercise-detail');
+        openAddToProgramModal(ex.name, appState.selectedWeek === 'all' ? 1 : appState.selectedWeek, '', isScore1 ? 'warmup' : 'workout');
+      };
+
+      document.getElementById('modal-exercise-detail').classList.remove('hidden');
+    }
+
+    function saveExerciseVideoLink() {
+      const url = document.getElementById('modal-ex-video-input').value.trim();
+      if (url) {
+        appState.exerciseVideos[currentModalExerciseName] = url;
+        showToast('Saved demo video link for ' + currentModalExerciseName, 'success');
+      } else {
+        delete appState.exerciseVideos[currentModalExerciseName];
+      }
+      saveState();
+      renderVideoPreviewLink(url);
+      if (appState.activeTab === 'library') renderExerciseLibrary();
+    }
+
+    function renderVideoPreviewLink(url) {
+      const container = document.getElementById('modal-ex-video-preview');
+      if (!url) {
+        container.innerHTML = `<p class="text-[11px] text-slate-400 italic">No custom video link attached yet. Paste a YouTube or Vimeo link above.</p>`;
+        return;
+      }
+      container.innerHTML = `
+        <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold hover:bg-emerald-100 transition">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Demo Video in New Tab
+        </a>
+      `;
+    }
+
+    function openAddToProgramModal(exName = '', week = 1, dayId = '', section = 'workout') {
+      document.getElementById('add-prog-name').value = exName;
+      document.getElementById('add-prog-week').value = String(week);
+      document.getElementById('add-prog-section').value = section;
+      populateAddProgramDays(dayId);
+      document.getElementById('modal-add-to-program').classList.remove('hidden');
+    }
+
+    function populateAddProgramDays(preselectDayId = '') {
+      const wk = parseInt(document.getElementById('add-prog-week').value, 10);
+      const daySelect = document.getElementById('add-prog-day');
+      const days = appState.programWeeks[wk] || [];
+      daySelect.innerHTML = days.map((d) => `<option value="${d.id}" ${d.id === preselectDayId ? 'selected' : ''}>${escapeHtml(d.dayLabel)}</option>`).join('');
+    }
+
+    function confirmAddExerciseToProgram() {
+      const name = document.getElementById('add-prog-name').value.trim();
+      if (!name) {
+        showToast('Please enter an exercise name.', 'warning');
+        return;
+      }
+      const wk = parseInt(document.getElementById('add-prog-week').value, 10);
+      const dayId = document.getElementById('add-prog-day').value;
+      const section = document.getElementById('add-prog-section').value;
+      const sets = parseInt(document.getElementById('add-prog-sets').value, 10) || 3;
+      const reps = document.getElementById('add-prog-reps').value || '10';
+      const weight = parseFloat(document.getElementById('add-prog-weight').value) || 0;
+      const rpe = parseFloat(document.getElementById('add-prog-rpe').value) || 7.5;
+      const notes = document.getElementById('add-prog-notes').value.trim();
+
+      const day = (appState.programWeeks[wk] || []).find((d) => d.id === dayId);
+      if (!day) {
+        showToast('Please add a workout day to that week first.', 'warning');
+        return;
+      }
+
+      if (section === 'warmup') {
+        day.warmups.push({
+          id: `wu-${Date.now()}`,
+          name,
+          prescription: `${sets} × ${reps}`
+        });
+      } else {
+        day.exercises.push({
+          id: `ex-${Date.now()}`,
+          name,
+          sets,
+          reps,
+          weight,
+          rpe,
+          notes,
+          completed: false
+        });
+      }
+
+      saveState();
+      closeModal('modal-add-to-program');
+      if (appState.activeTab === 'tracker') renderProgramTracker();
+      showToast(`Added "${name}" to Week ${wk}.`, 'success');
+    }
+
+    function openDataModal() {
+      document.getElementById('modal-data-io').classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    // -----------------------------------------------------------------------
+    // 13. CSV & JSON IMPORT / EXPORT HANDLERS (FILEREADER)
+    // -----------------------------------------------------------------------
+    function parseCSV(text) {
+      const rows = [];
+      let currentRow = [];
+      let currentCell = '';
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            currentCell += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === ',' && !insideQuotes) {
+          currentRow.push(currentCell.trim());
+          currentCell = '';
+        } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !insideQuotes) {
+          if (char === '\r') i++;
+          currentRow.push(currentCell.trim());
+          if (currentRow.some((c) => c !== '')) rows.push(currentRow);
+          currentRow = [];
+          currentCell = '';
+        } else {
+          currentCell += char;
+        }
+      }
+      if (currentCell.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentCell.trim());
+        if (currentRow.some((c) => c !== '')) rows.push(currentRow);
+      }
+      return rows;
+    }
+
+    function handleExerciseLibraryCSV(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const rows = parseCSV(e.target.result);
+          const imported = [];
+          for (let i = 1; i < rows.length; i++) {
+            const r = rows[i];
+            if (r.length >= 3 && r[2]) {
+              imported.push({
+                id: `csv-ex-${i}`,
+                pattern: r[0] || 'General',
+                targetScore: r[1] || 'Score 2 & 3',
+                name: r[2],
+                category: r[3] || 'Movement',
+                cues: r[4] || 'Follow prescribed tempo and controlled range of motion.'
+              });
+            }
+          }
+          if (imported.length > 0) {
+            appState.exerciseLibrary = imported;
+            saveState();
+            renderExerciseLibrary();
+            showToast(`Loaded ${imported.length} exercises from CSV!`, 'success');
+          } else {
+            showToast('No valid exercise rows found in CSV.', 'warning');
+          }
+        } catch (err) {
+          showToast('Error parsing Exercise Library CSV.', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function handleProgramTrackerCSV(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const rows = parseCSV(e.target.result);
+          const newWeeks = { 1: [], 2: [], 3: [], 4: [] };
+          let importedCount = 0;
+
+          for (let i = 1; i < rows.length; i++) {
+            const r = rows[i];
+            // Expect columns: Week, Day, Date, Exercise, Sets, Reps, Weight, RPE, Notes
+            const wkMatch = String(r[0] || '').match(/[1-4]/);
+            const wk = wkMatch ? parseInt(wkMatch[0], 10) : 1;
+            const dayName = r[1] || 'Day 1';
+            const dateVal = r[2] || new Date().toISOString().split('T')[0];
+            const exName = r[3];
+
+            if (!exName || exName.toLowerCase() === 'exercise') continue;
+
+            let dayObj = newWeeks[wk].find((d) => d.dayLabel === dayName);
+            if (!dayObj) {
+              dayObj = {
+                id: `imp-w${wk}-d${newWeeks[wk].length + 1}`,
+                dayLabel: dayName,
+                date: dateVal,
+                warmups: [],
+                exercises: []
+              };
+              newWeeks[wk].push(dayObj);
+            }
+
+            dayObj.exercises.push({
+              id: `imp-ex-${i}`,
+              name: exName,
+              sets: parseInt(r[4], 10) || 3,
+              reps: r[5] || '10',
+              weight: parseFloat(r[6]) || 0,
+              rpe: parseFloat(r[7]) || 7.5,
+              notes: r[8] || '',
+              completed: false
+            });
+            importedCount++;
+          }
+
+          if (importedCount > 0) {
+            appState.programWeeks = newWeeks;
+            saveState();
+            closeModal('modal-data-io');
+            renderProgramTracker();
+            showToast(`Imported ${importedCount} exercises into 4-Week Tracker!`, 'success');
+          } else {
+            showToast('Could not detect workout rows in CSV.', 'warning');
+          }
+        } catch (err) {
+          showToast('Error importing Program CSV.', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function exportProgramCSV() {
+      const headers = ['Week', 'Day', 'Date', 'Exercise', 'Sets', 'Reps', 'Weight (lbs)', 'RPE', 'Notes', 'Completed'];
+      const lines = [headers.join(',')];
+
+      [1, 2, 3, 4].forEach((wk) => {
+        (appState.programWeeks[wk] || []).forEach((day) => {
+          day.exercises.forEach((ex) => {
+            const row = [
+              `Week ${wk}`,
+              `"${day.dayLabel.replace(/"/g, '""')}"`,
+              day.date,
+              `"${ex.name.replace(/"/g, '""')}"`,
+              ex.sets,
+              `"${String(ex.reps).replace(/"/g, '""')}"`,
+              ex.weight,
+              ex.rpe,
+              `"${(ex.notes || '').replace(/"/g, '""')}"`,
+              ex.completed ? 'Yes' : 'No'
+            ];
+            lines.push(row.join(','));
+          });
+        });
+      });
+
+      downloadBlob(lines.join('\n'), `${appState.clientMeta.name.replace(/\s+/g, '_')}_4Week_Program.csv`, 'text/csv');
+      showToast('Exported 4-Week Program CSV!', 'success');
+    }
+
+    function exportFullJSON() {
+      const jsonStr = JSON.stringify(appState, null, 2);
+      downloadBlob(jsonStr, `${appState.clientMeta.name.replace(/\s+/g, '_')}_FMS_Portal_Backup.json`, 'application/json');
+      showToast('Exported full JSON program backup!', 'success');
+    }
+
+    function handleJSONImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.programWeeks) {
+            appState = { ...appState, ...parsed };
+            saveState();
+            closeModal('modal-data-io');
+            initUI();
+            showToast('Successfully restored JSON backup!', 'success');
+          } else {
+            showToast('Invalid JSON backup file.', 'error');
+          }
+        } catch (err) {
+          showToast('Error reading JSON file.', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function downloadBlob(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // -----------------------------------------------------------------------
+    // 14. UTILITY ESCAPING & INITIALIZATION
+    // -----------------------------------------------------------------------
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeJs(str) {
+      return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function initUI() {
+      document.getElementById('client-name-input').value = appState.clientMeta.name;
+      document.getElementById('client-phase-input').value = appState.clientMeta.phase;
+      document.getElementById('coach-notes-input').value = appState.clientMeta.notes;
+      updateClientMeta();
+
+      setAppMode(appState.mode || 'client');
+      selectWeek(appState.selectedWeek || 1);
+      renderFMSTab();
+      renderExerciseLibrary();
+      renderCalculatorTab();
+      switchTab(appState.activeTab || 'tracker');
+    }
+
+    // -----------------------------------------------------------------------
+    // 15. PROGRESSIVE WEB APP (PWA) MANIFEST, SERVICE WORKER & INSTALL FLOW
+    // -----------------------------------------------------------------------
+    let deferredInstallPrompt = null;
+
+    const PWA_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f172a"/>
+          <stop offset="100%" stop-color="#1e293b"/>
+        </linearGradient>
+        <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#34d399"/>
+          <stop offset="100%" stop-color="#0d9488"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+      <rect x="36" y="36" width="440" height="440" rx="88" fill="none" stroke="#334155" stroke-width="8"/>
+      <g fill="url(#accent)">
+        <rect x="108" y="186" width="36" height="140" rx="14"/>
+        <rect x="154" y="156" width="42" height="200" rx="16"/>
+        <rect x="196" y="238" width="120" height="36" rx="10"/>
+        <rect x="316" y="156" width="42" height="200" rx="16"/>
+        <rect x="368" y="186" width="36" height="140" rx="14"/>
+      </g>
+      <text x="256" y="425" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="44" fill="#f8fafc" text-anchor="middle" letter-spacing="4">FMS PRO</text>
+    </svg>`;
+
+    const PWA_ICON_DATA_URI = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(PWA_ICON_SVG);
+
+    const PWA_MANIFEST_OBJECT = {
+      name: 'FMS Program Tracker — Coach & Client Portal',
+      short_name: 'FMS Tracker',
+      description: 'FMS-driven 4-Week Program Tracker, Exercise Library, and 1RM/RPE Calculator.',
+      start_url: './index.html',
+      display: 'standalone',
+      orientation: 'portrait',
+      background_color: '#0f172a',
+      theme_color: '#0f172a',
+      icons: [
+        {
+          src: PWA_ICON_DATA_URI,
+          sizes: '192x192',
+          type: 'image/svg+xml',
+          purpose: 'any maskable'
+        },
+        {
+          src: PWA_ICON_DATA_URI,
+          sizes: '512x512',
+          type: 'image/svg+xml',
+          purpose: 'any maskable'
+        }
+      ]
+    };
+
+    const PWA_SERVICE_WORKER_CODE = `
+const CACHE_NAME = 'fms-program-tracker-v1';
+const CORE_ASSETS = ['./', './index.html'];
+
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS).catch(() => {}))
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => cachedResponse);
+      return cachedResponse || fetchPromise;
+    })
+  );
+});
+`;
+
+    function initPWA() {
+      // 1. Inject Apple Touch Icon & Dynamic Web App Manifest
+      const appleIconEl = document.getElementById('pwa-apple-touch-icon');
+      if (appleIconEl) appleIconEl.href = PWA_ICON_DATA_URI;
+
+      const manifestLinkEl = document.getElementById('pwa-manifest-link');
+      if (manifestLinkEl) {
+        const manifestBlob = new Blob([JSON.stringify(PWA_MANIFEST_OBJECT, null, 2)], { type: 'application/manifest+json' });
+        manifestLinkEl.href = URL.createObjectURL(manifestBlob);
+      }
+
+      // 2. Register Service Worker (supports external sw.js when hosted, with inline Blob fallback)
+      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.protocol === 'http:')) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {
+          try {
+            const swBlob = new Blob([PWA_SERVICE_WORKER_CODE], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+            navigator.serviceWorker.register(swUrl).catch(() => {});
+          } catch (e) {
+            // Blob SW restricted in sandboxed preview; offline localStorage remains active
+          }
+        });
+      }
+
+      // 3. Listen for Android/Chrome native install prompt
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        const nativeBox = document.getElementById('pwa-native-prompt-box');
+        if (nativeBox) nativeBox.classList.remove('hidden');
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        const nativeBox = document.getElementById('pwa-native-prompt-box');
+        if (nativeBox) nativeBox.classList.add('hidden');
+        showToast('FMS Program Tracker installed to your home screen!', 'success');
+      });
+
+      // 4. Online / Offline Gym Connectivity Listener
+      updateNetworkStatusUI();
+      window.addEventListener('online', updateNetworkStatusUI);
+      window.addEventListener('offline', updateNetworkStatusUI);
+    }
+
+    function updateNetworkStatusUI() {
+      const pill = document.getElementById('network-status-pill');
+      const dot = document.getElementById('network-status-dot');
+      const text = document.getElementById('network-status-text');
+      if (!pill || !dot || !text) return;
+
+      if (navigator.onLine) {
+        pill.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+        text.textContent = 'Online • Offline Ready';
+      } else {
+        pill.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse';
+        text.textContent = 'Offline Gym Mode';
+      }
+    }
+
+    function handleInstallAppClick() {
+      const nativeBox = document.getElementById('pwa-native-prompt-box');
+      if (deferredInstallPrompt && nativeBox) {
+        nativeBox.classList.remove('hidden');
+      }
+      document.getElementById('modal-pwa-install').classList.remove('hidden');
+    }
+
+    async function triggerNativeInstallPrompt() {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      if (outcome === 'accepted') {
+        showToast('Installing app to your home screen...', 'success');
+      }
+      deferredInstallPrompt = null;
+      closeModal('modal-pwa-install');
+    }
+
+    function downloadPWABundle() {
+      // Download manifest.json
+      const hostedManifest = {
+        ...PWA_MANIFEST_OBJECT,
+        icons: [
+          { src: './icon.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+          { src: './icon.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+        ]
+      };
+      downloadBlob(JSON.stringify(hostedManifest, null, 2), 'manifest.json', 'application/manifest+json');
+
+      // Download sw.js
+      setTimeout(() => {
+        downloadBlob(PWA_SERVICE_WORKER_CODE.trim(), 'sw.js', 'application/javascript');
+      }, 250);
+
+      // Download icon.svg
+      setTimeout(() => {
+        downloadBlob(PWA_ICON_SVG, 'icon.svg', 'image/svg+xml');
+      }, 500);
+
+      // Download index.html configured with static manifest & icon paths
+      setTimeout(() => {
+        let fullHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        fullHtml = fullHtml
+          .replace(/id="pwa-apple-touch-icon" href="[^"]*"/, 'id="pwa-apple-touch-icon" href="./icon.svg"')
+          .replace(/id="pwa-manifest-link" href="[^"]*"/, 'id="pwa-manifest-link" href="./manifest.json"');
+        downloadBlob(fullHtml, 'index.html', 'text/html');
+        showToast('Downloaded index.html, manifest.json, sw.js & icon.svg!', 'success');
+      }, 750);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      initUI();
+      initPWA();
+    });
+  </script>
+</body>
+</html>```
